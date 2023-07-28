@@ -1,0 +1,2522 @@
+
+
+----drop table DeliveryOrder    
+----drop table DriverShift
+----drop table DriverStaff
+----drop table PickupOrder
+----drop table WalkInOrder
+----drop table PhoneOrder
+----drop table QuantityOrderMenuItem
+----drop table Orders
+----drop table Customer
+----drop table MenuItemMadeofIngredients
+----drop table MenuItem
+----drop table MenuSellingPrice
+----drop table IngredientsQuantityIngredientOrder
+----drop table Ingredients
+----drop table IngredientStock
+----drop table IngredientOrder
+----drop table InstoreShift
+----drop table DriverPay
+----drop table DriverPayRecord
+----drop table InstorePay
+----drop table InstorePayRecord
+----drop table InstoreStaff
+
+
+--create database pesh_pizza_project
+--use pesh_pizza_project
+
+--CREATE TABLE InstoreStaff(
+--StaffId		VARCHAR(10) PRIMARY KEY,
+--fName		VARCHAR(50),
+--lName		VARCHAR(50), 
+--ADDRESS		VARCHAR(20) NOT NULL, 
+--ContactNo	CHAR(10) NOT NULL, 
+--taxFileNo	CHAR(12) NOT NULL, 
+--BankCode	CHAR(6) NOT NULL, 
+--bName		VARCHAR(20) NOT NULL, 
+--accNo		CHAR(10) NOT NULL, 
+--Status		VARCHAR(20), 
+--HourlyRate	VARCHAR(10) NOT NULL
+--);
+
+
+
+--CREATE TABLE Customer (
+--CustomerID		CHAR(10)		PRIMARY KEY,
+--firstName		VARCHAR(20)	NOT NULL,
+--lastname		VARCHAR(20) NOT NULL,
+--Address		VARCHAR(200) NOT NULL,
+--phoneNumber		VARCHAR(10) NOT NULL,
+--isHoax			VARCHAR(10) DEFAULT 'unverified',
+--CHECK(isHoax IN ('verified', 'unverified'))
+--);
+
+--CREATE TABLE Orders (
+--OrderNo		CHAR(10)		PRIMARY KEY,
+--OrderDateTime	DATETIME2,	
+--OrderType		VARCHAR(10),
+--TotalAmountDue	FLOAT,
+--PaymentMethod	VARCHAR(20) NOT NULL,
+--PaymentApprovalNo VARCHAR(20) NOT NULL,
+--OrderStatus VARCHAR (20),
+--CustomerID	CHAR(10),
+--StaffId		VARCHAR(10),
+--FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID) ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY(StaffId) REFERENCES InstoreStaff(StaffId) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE WalkInOrder (
+--OrderNo		CHAR(10)		PRIMARY KEY,
+--WalkInTime	DATETIME2,	
+--FOREIGN KEY (OrderNo) REFERENCES Orders(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE PhoneOrder (
+--OrderNo		CHAR(10)		PRIMARY KEY,
+--TimeCallAnswered	DATETIME2,	
+--TimeCallTerminated	DATETIME2,
+--FOREIGN KEY (OrderNo) REFERENCES Orders(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE PickupOrder (
+--OrderNo		CHAR(10)		PRIMARY KEY,
+--PickupTime	DATETIME2,	
+--FOREIGN KEY (OrderNo) REFERENCES Orders(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE DriverPayRecord(
+--TotalAmountPaid		VARCHAR(20) PRIMARY KEY,
+--GrossPayment		CHAR(20),
+--TaxWithheld			CHAR(20)
+--);
+
+--CREATE TABLE DriverPay(
+--RecordId		VARCHAR(10) PRIMARY KEY, 
+--TotalAmountPaid	VARCHAR(20), 
+--Date			DATE, 
+--PeriodStartDate	DATE, 
+--PeriodEndDate	DATE,
+--FOREIGN KEY (TotalAmountPaid) REFERENCES DriverPayRecord(TotalAmountPaid) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE DriverStaff(
+--StaffId		VARCHAR(10) PRIMARY KEY,
+--fName		VARCHAR(50),
+--lName		VARCHAR(50), 
+--ADDRESS		VARCHAR(20) NOT NULL, 
+--ContactNo	CHAR(10) NOT NULL, 
+--taxFileNo	CHAR(12) NOT NULL, 
+--BankCode	CHAR(6) NOT NULL, 
+--bName		VARCHAR(20) NOT NULL, 
+--accNo		CHAR(10) NOT NULL, 
+--Status		VARCHAR(20), 
+--DeliveryRate	VARCHAR(10) NOT NULL, 
+--DriverLicense	VARCHAR(8)
+--);
+
+--CREATE TABLE DriverShift(
+--RecordId		VARCHAR(10) PRIMARY KEY, 
+--StartDate		DATE,
+--StartTime		TIME,
+--EndDate			DATE, 
+--EndTime			TIME, 
+--StaffId			VARCHAR(10),
+--DriverPayRecordId	VARCHAR(10),
+--FOREIGN KEY (StaffId) REFERENCES DriverStaff (StaffId)ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY (DriverPayRecordId) REFERENCES DriverPay(RecordId)ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE DeliveryOrder (
+--OrderNo		CHAR(10)		PRIMARY KEY,
+--Address		VARCHAR(200) NOT NULL,
+--DeliveryTime	DATETIME2,
+--RecordId	VARCHAR(10),
+--FOREIGN KEY (OrderNo) REFERENCES Orders(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY(RecordId) REFERENCES DriverShift (RecordId) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE MenuSellingPrice(
+--CurrentSellingPrice	FLOAT	PRIMARY KEY,
+--Small		VARCHAR(20)  ,
+--Medium 		VARCHAR(10)  ,
+--Large 		VARCHAR(10)  
+--);
+
+--CREATE TABLE MenuItem(
+--ItemCode		CHAR(10)	PRIMARY KEY,
+--Name		VARCHAR(20) NOT NULL,
+--Size		VARCHAR(10) NOT NULL,
+--Price		FLOAT,
+--CurrentSellingPrice FLOAT,
+--Description VARCHAR(50),
+--FOREIGN KEY (CurrentSellingPrice) REFERENCES MenuSellingPrice (CurrentSellingPrice) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--CREATE TABLE IngredientStock(
+--StockLevel	CHAR(20) PRIMARY KEY,
+--SuggestedStockLevel	VARCHAR(20),
+--ReorderLevel	VARCHAR(20)
+--);
+ 
+--CREATE TABLE Ingredients(
+--Code	VARCHAR(10) PRIMARY KEY,
+--Name	VARCHAR(40) NOT NULL, 
+--Type	VARCHAR(40) NULL, 
+--Description	VARCHAR(40) NULL, 
+--StockLevel	CHAR(20) NOT NULL,
+--DateLastStockTake DATE,
+--FOREIGN KEY (StockLevel) REFERENCES IngredientStock(StockLevel) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+ --CREATE TABLE IngredientOrder(
+ --OrderNo	VARCHAR(10) PRIMARY KEY,
+ --Date		DATE,
+ --ReceivedDate	DATE,
+ --Status			VARCHAR(60),
+ --Description	VARCHAR(60),
+ --quantity		int,
+ --ToTalAmount	CHAR(20)
+ --);
+
+--CREATE TABLE QuantityOrderMenuItem (
+--ItemCode	CHAR(10) NOT NULL,
+--OrderNo		CHAR(10) NOT NULL,
+--quantity	int NOT NULL,
+--PRIMARY KEY	(ItemCode, OrderNo, quantity),	
+--FOREIGN KEY (OrderNo) REFERENCES Orders(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY (ItemCode) REFERENCES MenuItem(ItemCode) ON UPDATE CASCADE ON DELETE CASCADE
+--); 
+
+--CREATE TABLE MenuItemMadeofIngredients (
+--ItemCode	CHAR(10) NOT NULL,
+--Code		VARCHAR(10) NOT NULL,
+--quantity	int NOT NULL,
+--PRIMARY KEY	(ItemCode, Code, quantity),	
+--FOREIGN KEY (Code) REFERENCES Ingredients(Code) ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY (ItemCode) REFERENCES MenuItem(ItemCode) ON UPDATE CASCADE ON DELETE CASCADE
+--); 
+
+--CREATE TABLE IngredientsQuantityIngredientOrder (
+--Code		VARCHAR(10) NOT NULL,
+--OrderNo		VARCHAR(10) NOT NULL,
+--quantity	int NOT NULL,
+--PRIMARY KEY	(Code, OrderNo, quantity),	
+--FOREIGN KEY (Code) REFERENCES Ingredients(Code) ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY (OrderNo) REFERENCES IngredientOrder(OrderNo) ON UPDATE CASCADE ON DELETE CASCADE
+--); 
+
+
+--CREATE TABLE InstorePayRecord(
+--TotalAmountPaid		VARCHAR(20) PRIMARY KEY,
+--GrossPayment		CHAR(20),
+--TaxWithheld			CHAR(20)
+--);
+
+--CREATE TABLE InstorePay(
+--RecordId		VARCHAR(10) PRIMARY KEY, 
+--TotalAmountPaid	VARCHAR(20), 
+--Date			DATE, 
+--PeriodStartDate	DATE, 
+--PeriodEndDate	DATE,
+--Foreign Key (TotalAmountPaid) references InstorePayRecord(TotalAmountPaid)ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+
+--CREATE TABLE InstoreShift(
+--RecordId		CHAR(10) PRIMARY KEY, 
+--StartDate		DATE,
+--StartTime		TIME,
+--EndDate			DATE, 
+--EndTime			TIME, 
+--StaffId			VARCHAR(10) NOT NULL,
+--InstorePayRecordId	VARCHAR(10) NOT NULL,
+--Foreign Key (StaffId) references InstoreStaff (StaffId)ON UPDATE CASCADE ON DELETE CASCADE,
+--Foreign Key (InstorePayRecordId) references InstorePay(RecordId)ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+
+
+---- Insert Data
+
+
+--INSERT INTO InstoreStaff VALUES ('S0001', 'Ingel', 'Kate', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', null, '20');
+--INSERT INTO InstoreStaff VALUES ('S0002', 'Angel', 'Kota', '2/40 Riversdale rd', '0411223302', '111111222233', '019000', 'NAB', '5653666665', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S0003', 'Maria', 'Jane', '2/50 Riversdale St', '0411223303', '111111222234', '019000', 'NAB', '5653666667', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S0004', 'Mariam', 'Jane', '2/50 Riversdale St', '0411223304', '111111222235', '019000', 'NAB', '56536676637', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S0005', 'Mari', 'Jane', '2/30 Riversdale St', '0411223305', '111111222236', '019000', 'NAB', '5653666667', null, '25');
+--INSERT INTO InstoreStaff VALUES   ('S0006', 'hasan', 'javed', '2/50 Riversdale St', '0411223306', '111111222237', '019000', 'NAB', '5653666672', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S0007', 'muhammad', 'ismail', '2/50 Riversdale St', '0411223307', '111111222238', '019000', 'NAB', '5653666877', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S0008', 'muhammad', 'salman', '2/50 Riversdale St', '0411223308', '111111222239', '019000', 'NAB', '5653666667', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00010','muhammad', 'nouman', '2/50 Riversdale St', '0411333810', '111111222234', '019000', 'NAB', '5651366623', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S00011', 'raheel', 'ahmed', '2/54 Riversdale St', '0411223011', '111111222211', '019000', 'NAB', '565366660', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00012', 'asad', 'iftikhar', '2/53 Riversdale St', '0411223012', '111111222212', '019000', 'NAB', '565366661', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S0009', 'ahmed', 'virk', '2/52 Riversdale St', '0411223013', '111111222213', '019000', 'NAB', '563666713', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S00014', 'hamid', 'raza', '2/58 Riversdale St', '0411233014', '111111222214', '019000', 'NAB', '565666682', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00015', 'ali', 'raza', '2/15 Riversdale St', '0411223015', '111111222215', '019000', 'NAB', '565666623', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S00016', 'ali', 'ahmed', '2/12 Riversdale St', '0411223016', '111111222216', '019000', 'NAB', '565366622', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00017', 'ibrahim', 'nawaz', '2/30 Riversdale St', '0411233017', '111111222217', '019000', 'NAB', '5653666622', null, '25');
+--INSERT INTO InstoreStaff VALUES ('S00018', 'wajid', 'khan', '2/23 Riversdale St', '0411223318', '111111222218', '019000', 'NAB', '565366676', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00019', 'matie', 'ur rehman', '2/56 Riversdale St', '0411233019', '111111222219', '019000', 'NAB', '565666684', null, '20');
+--INSERT INTO InstoreStaff VALUES ('S00020', 'ahsan', 'ali', '2/50 Riversdale St', '0411223320', '111111222220', '019000', 'NAB', '565366699', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00021', 'hamza', 'abbas', '2/51 Riversdale St', '0411233021', '111111222221', '019000', 'NAB', '565366645', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00022', 'lewany', 'alak', '2/122 Riversdale St', '0411223022', '111111222222', '019000', 'NAB', '565366623', null, '20');
+--INSERT INTO InstoreStaff VALUES ('S00023', 'usman', 'khan', '2/65 Riversdale St', '0411223023', '111111222223', '019000', 'NAB', '565366623', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00024', 'salim', 'jan', '2/64 Riversdale St', '0411233024', '111111222224', '019000', 'NAB', '565366676', null, '20');
+--INSERT INTO InstoreStaff VALUES ('S00025', 'usama', 'lala', '2/23 Riversdale St', '0411223025', '111111222225', '019000', 'NAB', '565666665', null, '30');
+--INSERT INTO InstoreStaff VALUES ('S00026', 'jsama', 'tala', '2/23 Riversdale St', '041123025', '111111222225', '019000', 'NAB', '56566665', null, '30');
+
+--select * from InstoreStaff
+
+--INSERT INTO Customer VALUES ('C2040', 'Felipe', 'Silva', '2/28 Marine Parade','0422410808', 'verified');
+--INSERT INTO Customer VALUES ('C2041', 'Fabian', 'Silvaa', '2/30 Marine Parade','0422410809', 'verified');
+--INSERT INTO Customer VALUES ('C2042', 'John', 'Solsa', '2/50 Marine Parade 2','0422410807', 'verified');
+--INSERT INTO Customer VALUES ('C2043', 'usama', 'lala', '2/10 Marine Parade 2','0422410809', 'verified');
+--INSERT INTO Customer VALUES ('C2044', 'salim', 'jan', '2/11 Marine Parade 2','0422410810', 'verified');
+--INSERT INTO Customer VALUES ('C2045', 'usman', 'khan', '2/12 Marine Parade 2','0422410817', 'verified');
+--INSERT INTO Customer VALUES ('C2046', 'lewany', 'alak', '2/13 Marine Parade 2','0422410827', 'verified');
+--INSERT INTO Customer VALUES ('C2047', 'hamza', 'abbas', '2/14 Marine Parade 2','0422410837', 'verified');
+--INSERT INTO Customer VALUES ('C2048', 'ahsan', 'ali', '2/15 Marine Parade 2','0422410847', 'verified');
+--INSERT INTO Customer VALUES ('C2049', 'matie', 'rehman', '2/16 Marine Parade 2','0422410857', 'verified');
+--INSERT INTO Customer VALUES ('C2050', 'wajid', 'khan', '2/17 Marine Parade 2','0422410867', 'verified');
+--INSERT INTO Customer VALUES ('C2051', 'ibrahim', 'nawaz', '2/18 Marine Parade 2','0422410877', 'verified');
+--INSERT INTO Customer VALUES ('C2052', 'ali', 'ahmed', '2/19 Marine Parade 2','0422410887', 'verified');
+--INSERT INTO Customer VALUES ('C2053', 'ali', 'raza', '2/20 Marine Parade 2','0422410897', 'verified');
+--INSERT INTO Customer VALUES ('C2054', 'hamid', 'raza', '2/21 Mar1ine Parade 2','0422410812', 'verified');
+--INSERT INTO Customer VALUES ('C2055', 'raheel', 'khan', '2/22 Marine Parade 2','0422410822', 'verified');
+--INSERT INTO Customer VALUES ('C2056', 'salman', 'khan', '2/23 Marine Parade 2','0422410823', 'verified');
+--INSERT INTO Customer VALUES ('C2057', 'usama', 'khan', '2/24 Marine Parade 2','0422410824', 'verified');
+--INSERT INTO Customer VALUES ('C2058', 'adnan', 'khan', '2/25 Marine Parade 2','0422410833', 'verified');
+--INSERT INTO Customer VALUES ('C2059', 'huzaifa', 'khan', '2/26 Marine Parade 2','0422410832', 'verified');
+--INSERT INTO Customer VALUES ('C2060', 'ayan', 'khan', '2/27 Marine Parade 2','0422410831', 'verified');
+--INSERT INTO Customer VALUES ('C2061', 'zain', 'khan', '2/28 Marine Parade 2','0422410891', 'verified');
+--INSERT INTO Customer VALUES ('C2062', 'rehan', 'khan', '2/29 Marine Parade 2','0422410814', 'verified');
+--INSERT INTO Customer VALUES ('C2063', 'arsalan', 'khan', '2/30 Marine Parade 2','0422410852', 'verified');
+--INSERT INTO Customer VALUES ('C2064', 'zeshan', 'khan', '2/31 Marine Parade 2','0422410872', 'verified');
+--INSERT INTO Customer VALUES ('C2065', 'arham', 'khan', '2/32 Marine Parade 2','0422410883', 'verified');
+
+--select * from Customer
+
+--INSERT INTO Orders VALUES ('00001','20210618 10:34:09 PM', 'Delivery', null, 'card', 'AA10555551', null, 'C2040', 'S0003');
+--INSERT INTO Orders VALUES ('00002','20210619 10:34:33 PM', 'Delivery', null, 'card', 'AA10555553', null, 'C2041', 'S0003');
+--INSERT INTO Orders VALUES ('00003','20210618 10:10:09 PM', 'Pickup', null, 'card', 'AA10555552', null, 'C2042', 'S0002');
+--INSERT INTO Orders VALUES ('00004','20210618 09:40:09 PM', 'Pickup', null, 'card', 'AA10555551', null, 'C2043', 'S0002');
+--INSERT INTO Orders VALUES ('00005','20210618 07:40:09 PM', 'Delivery', null, 'card', 'AA10555554', null, 'C2044', 'S0002');
+--INSERT INTO Orders VALUES ('00006','20210618 09:34:09 PM', 'Pickup', null, 'card', 'AA10555558', null, 'C2045', 'S0003');
+--INSERT INTO Orders VALUES ('00007','20210618 06:40:09 PM', 'Pickup', null, 'card', 'AA10555559', null, 'C2046', 'S0003');
+--INSERT INTO Orders VALUES ('00008','20210618 09:20:09 PM', 'Delivery', null, 'card', 'AA10555560', null, 'C2047', 'S0001');
+--INSERT INTO Orders VALUES ('00009','20210618 09:20:09 PM', 'Delivery', null, 'card', 'AA10555561', null, 'C2048', 'S0001');
+--INSERT INTO Orders VALUES ('000010','20210618 10:40:09 PM', 'Pickup', null, 'card', 'AA10555562', null, 'C2049', 'S0003');
+--INSERT INTO Orders VALUES ('000011','20210618 06:20:09 PM', 'Pickup', null, 'card', 'AA10555563', null, 'C2050', 'S0003');
+--INSERT INTO Orders VALUES ('000012','20210618 06:34:09 PM', 'Pickup', null, 'card', 'AA10555564', null, 'C2051', 'S0003');
+--INSERT INTO Orders VALUES ('000013','20210618 10:30:09 PM', 'Delivery', null, 'card', 'AA10555565', null, 'C2052', 'S0001');
+--INSERT INTO Orders VALUES ('000014','20210618 07:20:09 PM', 'Delivery', null, 'card', 'AA10555566', null, 'C2053', 'S0001');
+--INSERT INTO Orders VALUES ('000015','20210618 09:40:09 PM', 'Pickup', null, 'card', 'AA10555567', null, 'C2054', 'S0001');
+--INSERT INTO Orders VALUES ('000016','20210618 10:40:09 PM', 'Pickup', null, 'card', 'AA10555568', null, 'C2055', 'S0003');
+--INSERT INTO Orders VALUES ('000017','20210618 06:30:09 PM', 'Delivery', null, 'card', 'AA10555569', null, 'C2056', 'S0003');
+--INSERT INTO Orders VALUES ('000018','20210618 07:40:09 PM', 'Pickup', null, 'card', 'AA10555570', null, 'C2057', 'S0003');
+--INSERT INTO Orders VALUES ('000019','20210618 06:30:09 PM', 'Delivery', null, 'card', 'AA10555571', null, 'C2058', 'S0001');
+--INSERT INTO Orders VALUES ('000020','20210618 10:20:09 PM', 'Pickup', null, 'card', 'AA10555572', null, 'C2059', 'S0001');
+--INSERT INTO Orders VALUES ('000021','20210618 06:40:09 PM', 'Delivery', null, 'card', 'AA10555573', null, 'C2060', 'S0001');
+--INSERT INTO Orders VALUES ('000022','20210618 06:20:09 PM', 'Delivery', null, 'card', 'AA10555574', null, 'C2061', 'S0001');
+--INSERT INTO Orders VALUES ('000023','20210618 10:30:09 PM', 'Pickup', null, 'card', 'AA10555575', null, 'C2062', 'S0003');
+--INSERT INTO Orders VALUES ('000024','20210618 07:20:09 PM', 'Delivery', null, 'card', 'AA10555588', null, 'C2063', 'S0001');
+--INSERT INTO Orders VALUES ('000025','20210618 07:10:09 PM', 'Delivery', null, 'card', 'AA10555598', null, 'C2064', 'S0003');
+
+----select * from Orders
+
+
+
+--INSERT INTO WalkInOrder VALUES ('00001', '20210618 10:40:09 PM');
+--INSERT INTO WalkInOrder VALUES ('00004', '20210618 10:41:09 PM');
+--INSERT INTO WalkInOrder VALUES ('00005', '20210618 10:43:11 PM');
+--INSERT INTO WalkInOrder VALUES ('00006', '20210618 10:44:11 PM');
+--INSERT INTO WalkInOrder VALUES ('00007', '20210618 10:53:11 PM');
+--INSERT INTO WalkInOrder VALUES ('00008', '20210618 10:33:11 PM');
+--INSERT INTO WalkInOrder VALUES ('00009', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000010', '20210618 10:53:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000011', '20210618 10:42:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000012', '20210618 10:49:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000013', '20210618 10:46:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000014', '20210618 10:12:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000015', '20210618 10:11:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000016', '20210618 10:15:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000017', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000018', '20210618 10:32:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000019', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000020', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000021', '20210618 10:11:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000022', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000023', '20210618 10:23:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000024', '20210618 10:43:11 PM');
+--INSERT INTO WalkInOrder VALUES ('000025', '20210618 10:11:11 PM');
+--INSERT INTO WalkInOrder VALUES ('00006', '20210618 10:11:11 PM');
+--INSERT INTO WalkInOrder VALUES ('0007', '20210618 10:23:11 PM');
+
+----select * from WalkInOrder
+
+--INSERT INTO PhoneOrder VALUES ('00003', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00002', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00006', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00004', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00005', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00007', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00008', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('00009', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000010', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000011', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000012', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000013', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000014', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000015', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000016', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000017', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000018', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000019', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000020', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000021', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000022', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000023', '20210618 10:34:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000024', '20210619 10:34:33 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000025', '20210618 10:44:09 PM', null);
+--INSERT INTO PhoneOrder VALUES ('000026', '20210719 10:14:09 PM', null);
+
+--select * from PhoneOrder
+
+
+
+--INSERT INTO DriverStaff VALUES ('SA001', 'Mona', 'Katelyn', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA002', 'John', 'Moon', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA003', 'Paul', 'Kate', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA004', 'usman', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA005', 'salman', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA006', 'raheel', 'ahmed', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA007', 'azan', 'al jubeer', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA008', 'mehdi', 'akram', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA009', 'adnan', 'shah', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0010', 'nouman', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0011', 'zeshan', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0012', 'arsalan', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0013', 'saad', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0014', 'amar', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0015', 'zain', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0016', 'ayan', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0017', 'huzaifa', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0018', 'ayan', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0019', 'haris', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0020', 'hamza', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0021', 'saqib', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0022', 'asim', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0023', 'sayam', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0024', 'umer', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+--INSERT INTO DriverStaff VALUES ('SA0025', 'sarim', 'khan', '2/22 Riversdale rd', '0411223301', '111111222222', '019000', 'NAB', '5653666666', '', '10', '8888999');
+
+--select * from DriverStaff
+
+--INSERT INTO DriverPayRecord VALUES ( '300', '360', '60');
+--INSERT INTO DriverPayRecord VALUES ( '350', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '330', '360', '30');
+--INSERT INTO DriverPayRecord VALUES ( '303', '360', '60');
+--INSERT INTO DriverPayRecord VALUES ( '353', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '333', '360', '30');
+--INSERT INTO DriverPayRecord VALUES ( '310', '360', '60');
+--INSERT INTO DriverPayRecord VALUES ( '320', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '370', '360', '30');
+--INSERT INTO DriverPayRecord VALUES ( '383', '360', '60');
+--INSERT INTO DriverPayRecord VALUES ( '307', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '389', '360', '30');
+--INSERT INTO DriverPayRecord VALUES ( '332', '360', '60');
+--INSERT INTO DriverPayRecord VALUES ( '343', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '323', '360', '30');
+--INSERT INTO DriverPayRecord VALUES ( '398', '460', '60');
+--INSERT INTO DriverPayRecord VALUES ( '123', '520', '70');
+--INSERT INTO DriverPayRecord VALUES ( '393', '760', '30');
+--INSERT INTO DriverPayRecord VALUES ( '390', '160', '60');
+--INSERT INTO DriverPayRecord VALUES ( '336', '420', '70');
+--INSERT INTO DriverPayRecord VALUES ( '338', '260', '30');
+--INSERT INTO DriverPayRecord VALUES ( '347', '560', '60');
+--INSERT INTO DriverPayRecord VALUES ( '367', '520', '70');
+--INSERT INTO DriverPayRecord VALUES ( '387', '460', '30');
+--INSERT INTO DriverPayRecord VALUES ( '397', '260', '30');
+
+
+--select * from DriverPayRecord
+
+--INSERT INTO DriverPay VALUES ('P0012', '300', '20210615', '20210606', '20210612');
+--INSERT INTO DriverPay VALUES ('P0013', '350', '20210530', '20210522', '20210528');
+--INSERT INTO DriverPay VALUES ('P0014', '330', '20210515', '20210506', '20210514');
+--INSERT INTO DriverPay VALUES ('P0022', '303', '20220215', '20220206', '20220212');
+--INSERT INTO DriverPay VALUES ('P0033', '353', '20220227', '20220222', '20220227');
+--INSERT INTO DriverPay VALUES ('P0044', '333', '20220215', '20220206', '20220214');
+--INSERT INTO DriverPay VALUES ('P0016', '310', '20210615', '20210606', '20210612');
+--INSERT INTO DriverPay VALUES ('P0017', '320', '20210530', '20210522', '20210528');
+--INSERT INTO DriverPay VALUES ('P0018', '332', '20210515', '20210506', '20210514');
+--INSERT INTO DriverPay VALUES ('P00023', '303', '20220215', '20220206', '20220212');
+--INSERT INTO DriverPay VALUES ('P00049', '354', '20220227', '20220222', '20220227');
+--INSERT INTO DriverPay VALUES ('P0046', '332', '20220215', '20220206', '20220214');
+--INSERT INTO DriverPay VALUES ('P0107', '390', '20210615', '20210606', '20210612');
+--INSERT INTO DriverPay VALUES ('00019', '356', '20210530', '20210522', '20210528');
+--INSERT INTO DriverPay VALUES ('P0011', '338', '20210515', '20210506', '20210514');
+--INSERT INTO DriverPay VALUES ('P0024', '387', '20220215', '20220206', '20220212');
+--INSERT INTO DriverPay VALUES ('P039', '367', '20220227', '20220222', '20220227');
+--INSERT INTO DriverPay VALUES ('P0042', '387', '20220215', '20220206', '20220214');
+--INSERT INTO DriverPay VALUES ('P0026', '367', '20210615', '20210606', '20210612');
+--INSERT INTO DriverPay VALUES ('P0031', '370', '20210530', '20210522', '20210528');
+--INSERT INTO DriverPay VALUES ('P0054', '343', '20210515', '20210506', '20210514');
+--INSERT INTO DriverPay VALUES ('P0053', '338', '20220215', '20220206', '20220212');
+--INSERT INTO DriverPay VALUES ('P0035', '390', '20220227', '20220222', '20220227');
+--INSERT INTO DriverPay VALUES ('P0078', '393', '20220215', '20220206', '20220214');
+--INSERT INTO DriverPay VALUES ('P0045', '397', '20220215', '20220206', '20220214');
+
+--select * from DriverPay
+
+--INSERT INTO DriverShift VALUES ('000221', '20210606', '04:34:09 PM', '20210606', '11:34:09 PM', 'SA001', 'P0012');
+--INSERT INTO DriverShift VALUES ('000222', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', 'P0012');
+--INSERT INTO DriverShift VALUES ('000223', '20210608', '04:31:09 PM', '20210608', '11:32:11 PM', 'SA007', 'P0014');
+--INSERT INTO DriverShift VALUES ('000321', '20220206', '04:34:09 PM', '20220206', '11:34:09 PM', 'SA001', 'P0022');
+--INSERT INTO DriverShift VALUES ('000322', '20220223', '04:30:09 PM', '20220223', '11:30:09 PM', 'SA005', 'P0033');
+--INSERT INTO DriverShift VALUES ('000323', '20220208', '04:31:09 PM', '20220208', '11:32:11 PM', 'SA007', 'P0044');
+--INSERT INTO DriverShift VALUES ('000224', '20210606', '04:34:09 PM', '20210606', '11:34:09 PM', 'SA001', 'P0014');
+--INSERT INTO DriverShift VALUES ('000225', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', 'P0016');
+--INSERT INTO DriverShift VALUES ('000226', '20210608', '04:31:09 PM', '20210608', '11:32:11 PM', 'SA007', 'P0017');
+--INSERT INTO DriverShift VALUES ('000324', '20220206', '04:34:09 PM', '20220206', '11:34:09 PM', 'SA001', 'P0022');
+--INSERT INTO DriverShift VALUES ('000325', '20220223', '04:30:09 PM', '20220223', '11:30:09 PM', 'SA005', 'P0033');
+--INSERT INTO DriverShift VALUES ('000326', '20220208', '04:31:09 PM', '20220208', '11:32:11 PM', 'SA007', 'P0044');
+--INSERT INTO DriverShift VALUES ('000227', '20210606', '04:34:09 PM', '20210606', '11:34:09 PM', 'SA001', 'P0018');
+--INSERT INTO DriverShift VALUES ('000228', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', '00019');
+--INSERT INTO DriverShift VALUES ('000229', '20210608', '04:31:09 PM', '20210608', '11:32:11 PM', 'SA007', 'P0014');
+--INSERT INTO DriverShift VALUES ('000327', '20220206', '04:34:09 PM', '20220206', '11:34:09 PM', 'SA001', 'P0022');
+--INSERT INTO DriverShift VALUES ('000328', '20220223', '04:30:09 PM', '20220223', '11:30:09 PM', 'SA005', 'P0022');
+--INSERT INTO DriverShift VALUES ('000329', '20220208', '04:31:09 PM', '20220208', '11:32:11 PM', 'SA007', 'P0042');
+--INSERT INTO DriverShift VALUES ('000230', '20210606', '04:34:09 PM', '20210606', '11:34:09 PM', 'SA001', 'P039');
+--INSERT INTO DriverShift VALUES ('000231', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', 'P0035');
+--INSERT INTO DriverShift VALUES ('000232', '20210608', '04:31:09 PM', '20210608', '11:32:11 PM', 'SA007', 'P0054');
+--INSERT INTO DriverShift VALUES ('000330', '20220206', '04:34:09 PM', '20220206', '11:34:09 PM', 'SA001', 'P0042');
+--INSERT INTO DriverShift VALUES ('000331', '20220223', '04:30:09 PM', '20220223', '11:30:09 PM', 'SA005', 'P0022');
+--INSERT INTO DriverShift VALUES ('000332', '20220208', '04:31:09 PM', '20220208', '11:32:11 PM', 'SA007', 'P0022');
+--INSERT INTO DriverShift VALUES ('000333', '20220208', '04:31:09 PM', '20220208', '11:32:11 PM', 'SA007', 'P0024');
+
+----select * from DriverShift
+
+
+----issue
+
+----INSERT INTO DeliveryOrder VALUES ('00001', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000321');
+--INSERT INTO DeliveryOrder VALUES ('00002', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000322');
+--INSERT INTO DeliveryOrder VALUES ('00005', '2/55 Marine rd', '20210608 09:04:09 PM', '000223');
+--INSERT INTO DeliveryOrder VALUES ('00003', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000321');
+--INSERT INTO DeliveryOrder VALUES ('00004', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000322');
+--INSERT INTO DeliveryOrder VALUES ('00006', '2/55 Marine rd', '20210608 09:04:09 PM', '000323');
+--INSERT INTO DeliveryOrder VALUES ('00007', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000224');
+--INSERT INTO DeliveryOrder VALUES ('00008', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000225');
+--INSERT INTO DeliveryOrder VALUES ('00009', '2/55 Marine rd', '20210608 09:04:09 PM', '000226');
+--INSERT INTO DeliveryOrder VALUES ('000010', '2/22 Riversdale rd', '20210718 10:44:09 PM', '000227');
+--INSERT INTO DeliveryOrder VALUES ('000011', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000325');
+--INSERT INTO DeliveryOrder VALUES ('000012', '2/55 Marine rd', '20210608 09:04:09 PM', '000326');
+--INSERT INTO DeliveryOrder VALUES ('000013', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000227');
+--INSERT INTO DeliveryOrder VALUES ('000014', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000227');
+--INSERT INTO DeliveryOrder VALUES ('000015', '2/55 Marine rd', '20210608 09:04:09 PM', '000229');
+--INSERT INTO DeliveryOrder VALUES ('000016', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000327');
+--INSERT INTO DeliveryOrder VALUES ('000017', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000328');
+--INSERT INTO DeliveryOrder VALUES ('000018', '2/55 Marine rd', '20210608 09:04:09 PM', '000329');
+--INSERT INTO DeliveryOrder VALUES ('000019', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000230');
+--INSERT INTO DeliveryOrder VALUES ('000020', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000231');
+--INSERT INTO DeliveryOrder VALUES ('000021', '2/55 Marine rd', '20210608 09:04:09 PM', '000232');
+--INSERT INTO DeliveryOrder VALUES ('000022', '2/22 Riversdale rd', '20210618 10:44:09 PM', '000330');
+--INSERT INTO DeliveryOrder VALUES ('000023', '2/55 Riversdale rd', '20210618 10:54:09 PM', '000331');
+--INSERT INTO DeliveryOrder VALUES ('000024', '2/55 Marine rd', '20210608 09:04:09 PM', '000332');
+--INSERT INTO DeliveryOrder VALUES ('000025', '2/55 Marine rd', '20210608 09:04:09 PM', '000333');
+
+--select * from DeliveryOrder
+
+
+--INSERT INTO MenuSellingPrice VALUES ( '30', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '10', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '20', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '40', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '50', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '60', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '70', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '80', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '90', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '100', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '105', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '120', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '130', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '110', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '140', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '150', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '160', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '170', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '180', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '190', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '200', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '210', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '220', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '230', '$10', '$170', '$240');
+--INSERT INTO MenuSellingPrice VALUES ( '240', '$10', '$170', '$240');
+--select * from MenuSellingPrice
+
+
+--INSERT INTO MenuItem VALUES ('PZ001', 'Margarita', 'Large', '30', '30', 'Cheese and basil only');
+--INSERT INTO MenuItem VALUES ('PZ002', 'Salami', 'Large', '30', '30', 'Cheese and Salami');
+--INSERT INTO MenuItem VALUES ('PZ003', 'Seafood', 'Medium', '20', '20', 'Cheese and Seafood');
+--INSERT INTO MenuItem VALUES ('PZ004', 'fingerchips', 'Large', '30', '30', 'Cheese and fingerchips');
+--INSERT INTO MenuItem VALUES ('PZ005', 'burger', 'Large', '20', '30', 'Cheese and burger');
+--INSERT INTO MenuItem VALUES ('PZ006', 'chicken', 'Medium', '20', '20', 'Cheese and chiken');
+--INSERT INTO MenuItem VALUES ('PZ007', 'pizza', 'Large', '50', '30', 'Cheese and pizza');
+--INSERT INTO MenuItem VALUES ('PZ008', 'pizza', 'Large', '50', '30', 'Cheese and pizza');
+--INSERT INTO MenuItem VALUES ('PZ009', 'pizza', 'Medium', '25', '20', 'Cheese and pizza');
+--INSERT INTO MenuItem VALUES ('PZ010', 'egg', 'Large', '30', '30', 'Cheese and boil egg');
+--INSERT INTO MenuItem VALUES ('PZ011', 'shwarma', 'Large', '30', '30', 'Cheese and shwarma');
+--INSERT INTO MenuItem VALUES ('PZ012', 'kabab', 'Medium', '20', '20', 'Cheese and kabab');
+--INSERT INTO MenuItem VALUES ('PZ013', 'karri', 'Large', '30', '30', 'Cheese and  karri');
+--INSERT INTO MenuItem VALUES ('PZ014', 'pakora', 'Large', '30', '30', 'Cheese and pakora');
+--INSERT INTO MenuItem VALUES ('PZ015', 'biryan', 'Medium', '20', '20', 'Cheese and biryan');
+--INSERT INTO MenuItem VALUES ('PZ016', 'white rice', 'Large', '30', '30', 'Cheese and white ricce');
+--INSERT INTO MenuItem VALUES ('PZ017', 'beef', 'Large', '30', '30', 'Cheese and beef');
+--INSERT INTO MenuItem VALUES ('PZ018', 'daal', 'Medium', '20', '20', 'Cheese and daal');
+--INSERT INTO MenuItem VALUES ('PZ019', 'chana', 'Large', '30', '30', 'Cheese and chana');
+--INSERT INTO MenuItem VALUES ('PZ020', 'daal chana', 'Large', '30', '30', 'Cheese and daal chana');
+--INSERT INTO MenuItem VALUES ('PZ021', 'sabzi', 'Medium', '20', '20', 'Cheese and Sabzi');
+--INSERT INTO MenuItem VALUES ('PZ022', 'bakra', 'Large', '30', '30', 'Cheese and bakra');
+--INSERT INTO MenuItem VALUES ('PZ023', 'seekh', 'Large', '30', '30', 'Cheese and Seekh');
+--INSERT INTO MenuItem VALUES ('PZ024', 'seekh kabab', 'Medium', '20', '20', 'Cheese and seekh kabab');
+--INSERT INTO MenuItem VALUES ('PZ025', 'shami burger', 'Medium', '20', '20', 'Cheese and shami burger');
+--select * from MenuItem
+
+--INSERT INTO IngredientStock VALUES ('2000', '1000', '500');
+--INSERT INTO IngredientStock VALUES ('5000', '2500', '1000');
+--INSERT INTO IngredientStock VALUES ('3000', '1500', '1000');
+--INSERT INTO IngredientStock VALUES ('1000', '2000', '1500');
+--INSERT INTO IngredientStock VALUES ('4000', '2100', '1100');
+--INSERT INTO IngredientStock VALUES ('6000', '1400', '1300');
+--INSERT INTO IngredientStock VALUES ('7000', '2300', '540');
+--INSERT INTO IngredientStock VALUES ('8000', '2700', '1500');
+--INSERT INTO IngredientStock VALUES ('9000', '1600', '1600');
+--INSERT INTO IngredientStock VALUES ('2310', '1600', '510');
+--INSERT INTO IngredientStock VALUES ('5500', '2800', '1200');
+--INSERT INTO IngredientStock VALUES ('3500', '1900', '1800');
+--INSERT INTO IngredientStock VALUES ('2500', '1600', '5000');
+--INSERT INTO IngredientStock VALUES ('5300', '2500', '1420');
+--INSERT INTO IngredientStock VALUES ('3300', '1200', '2330');
+--INSERT INTO IngredientStock VALUES ('2300', '1100', '1500');
+--INSERT INTO IngredientStock VALUES ('5200', '2200', '1010');
+--INSERT INTO IngredientStock VALUES ('3200', '1300', '1000');
+--INSERT INTO IngredientStock VALUES ('2200', '1700', '500');
+--INSERT INTO IngredientStock VALUES ('5100', '2400', '2700');
+--INSERT INTO IngredientStock VALUES ('3100', '4300', '3100');
+--INSERT INTO IngredientStock VALUES ('2100', '1300', '3500');
+--INSERT INTO IngredientStock VALUES ('5600', '2200', '4300');
+--INSERT INTO IngredientStock VALUES ('3600', '1100', '1300');
+
+----select * from IngredientStock
+
+--INSERT INTO Ingredients VALUES ( '0011', 'Cheese', 'Mozarella', 'cheese topping', '5000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0012', 'Salami', 'hot', 'salami pizza', '2000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0013', 'Seafood', 'Calamari', 'seafood topping', '3000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0014', 'Cheese', 'Mozarella', 'cheese topping', '4000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0015', 'Salami', 'hot', 'salami pizza', '5000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0016', 'Seafood', 'Calamari', 'seafood topping', '6000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0017', 'Cheese', 'Mozarella', 'cheese topping', '7000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0018', 'Salami', 'hot', 'salami pizza', '8000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0019', 'Seafood', 'Calamari', 'seafood topping', '9000', '20210605');
+--INSERT INTO Ingredients VALUES ( '0020', 'Cheese', 'Mozarella', 'cheese topping', '2500', '20210605');
+--INSERT INTO Ingredients VALUES ( '0021', 'Salami', 'hot', 'salami pizza', '5500', '20210605');
+--INSERT INTO Ingredients VALUES ( '0022', 'Seafood', 'Calamari', 'seafood topping', '3500', '20210605');
+--INSERT INTO Ingredients VALUES ( '0023', 'Cheese', 'Mozarella', 'cheese topping', '2500', '20210605');
+--INSERT INTO Ingredients VALUES ( '0024', 'Salami', 'hot', 'salami pizza', '5300', '20210605');
+--INSERT INTO Ingredients VALUES ( '0025', 'Seafood', 'Calamari', 'seafood topping', '2500', '20210605');
+--INSERT INTO Ingredients VALUES ( '0026', 'Cheese', 'Mozarella', 'cheese topping', '3300', '20210605');
+--INSERT INTO Ingredients VALUES ( '0027', 'Salami', 'hot', 'salami pizza', '2300', '20210605');
+--INSERT INTO Ingredients VALUES ( '0028', 'Seafood', 'Calamari', 'seafood topping', '5200', '20210605');
+--INSERT INTO Ingredients VALUES ( '0029', 'Cheese', 'Mozarella', 'cheese topping', '3200', '20210605');
+--INSERT INTO Ingredients VALUES ( '0030', 'Salami', 'hot', 'salami pizza', '2200', '20210605');
+--INSERT INTO Ingredients VALUES ( '0031', 'Seafood', 'Calamari', 'seafood topping', '5100', '20210605');
+--INSERT INTO Ingredients VALUES ( '0032', 'Cheese', 'Mozarella', 'cheese topping', '3100', '20210605');
+--INSERT INTO Ingredients VALUES ( '0033', 'Salami', 'hot', 'salami pizza', '2100', '20210605');
+--INSERT INTO Ingredients VALUES ( '0034', 'Seafood', 'Calamari', 'seafood topping', '5600', '20210605');
+--INSERT INTO Ingredients VALUES ( '0035', 'Seafood', 'Calamari', 'seafood topping', '3200', '20210605');
+
+--select * from Ingredients
+
+--INSERT INTO IngredientOrder VALUES ('IN0012', '20210607', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0010', '20210510', '20210515',null, null, 3000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0009', '20210510', '20210603',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0011', '20210601', '20210610',null, null, 1000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0001', '20210520', '20210515',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0002', '20210510', '20210603',null, null, 4000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0013', '20210617', '20210610',null, null, 6000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0003', '20210511', '20210515',null, null, 5000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0004', '20210530', '20210603',null, null, 8000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0014', '20210627', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0005', '20210512', '20210515',null, null, 3000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0006', '20210531', '20210603',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0015', '20210612', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0016', '20210514', '20210515',null, null, 5000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0007', '20210530', '20210603',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0017', '20210621', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0018', '20210514', '20210515',null, null, 4000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0008', '20210515', '20210603',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0019', '20210602', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0020', '20210503', '20210515',null, null, 3000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0021', '20210504', '20210603',null, null, 4000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0022', '20210615', '20210610',null, null, 7000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0023', '20210516', '20210515',null, null, 4000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0024', '20210527', '20210603',null, null, 2000, null );
+--INSERT INTO IngredientOrder VALUES ('IN0025', '20210518', '20210603',null, null, 4000, null );
+
+--select * from IngredientOrder
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ001', '00001', 12);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ002', '00002', 21);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ003', '00003', 27);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ004', '00004', 11);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ005', '00005', 22);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ006', '00006', 23);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ007', '00007', 14);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ008', '00008', 24);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ009', '00009', 25);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ010', '000010', 15);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ011', '000011', 26);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ012', '000012', 28);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ013', '000013', 16);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ023', '000023', 36);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ024', '000024', 37);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ025', '000025', 38);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ014', '000014', 29);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ015', '000015', 30);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ016', '000016', 17);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ017', '000017', 31);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ018', '000018', 32);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ019', '000019', 20);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ020', '000020', 33);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ021', '000021', 34);
+--INSERT INTO QuantityOrderMenuItem VALUES ( 'PZ022', '000022', 35);
+
+--select * from QuantityOrderMenuItem
+
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ001', '0011', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ002', '0012', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ002', '0013', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ003', '0014', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ003', '0015', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ004', '0016', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ005', '0017', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ006', '0018', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ007', '0019', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ008', '0020', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ009', '0021', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ010', '0022', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ011', '0023', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ012', '0024', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ013', '0025', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ014', '0026', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ015', '0027', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ016', '0028', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ013', '0029', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ014', '0030', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ018', '0031', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ017', '0032', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ023', '0033', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ033', '0034', 100);
+--INSERT INTO MenuItemMadeofIngredients VALUES ('PZ022', '0035', 100);
+
+--select * from MenuItemMadeofIngredients
+
+
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0011', 'IN0012', 3000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0012', 'IN0012', 2000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0013', 'IN0012', 2000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0014', 'IN0012', 4000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0015', 'IN0012', 4000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0016', 'IN0012', 5000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0017', 'IN0012', 6000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0018', 'IN0012', 6000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0019', 'IN0012', 7000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0020', 'IN0012', 8000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0021', 'IN0012', 8000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0022', 'IN0012', 9000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0023', 'IN0012', 1000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0024', 'IN0012', 2000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0025', 'IN0012', 3000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0026', 'IN0012', 5000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0027', 'IN0012', 6000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0028', 'IN0012', 7000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0029', 'IN0012', 6000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0030', 'IN0012', 5000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0031', 'IN0012', 2000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0032', 'IN0012', 4000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0033', 'IN0012', 3000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0034', 'IN0012', 4000);
+--INSERT INTO IngredientsQuantityIngredientOrder VALUES ( '0035', 'IN0012', 2000);
+
+----select * from IngredientsQuantityIngredientOrder
+
+--INSERT INTO InstorePayRecord VALUES ( '200', '250', '50');
+--INSERT INTO InstorePayRecord VALUES ( '300', '350', '50');
+--INSERT INTO InstorePayRecord VALUES ( '400', '450', '50');
+--INSERT INTO InstorePayRecord VALUES ( '210', '150', '50');
+--INSERT INTO InstorePayRecord VALUES ( '310', '250', '50');
+--INSERT INTO InstorePayRecord VALUES ( '410', '350', '50');
+--INSERT INTO InstorePayRecord VALUES ( '220', '550', '50');
+--INSERT INTO InstorePayRecord VALUES ( '320', '650', '50');
+--INSERT INTO InstorePayRecord VALUES ( '420', '420', '50');
+--INSERT INTO InstorePayRecord VALUES ( '230', '230', '50');
+--INSERT INTO InstorePayRecord VALUES ( '330', '320', '50');
+--INSERT INTO InstorePayRecord VALUES ( '430', '440', '50');
+--INSERT INTO InstorePayRecord VALUES ( '240', '220', '50');
+--INSERT INTO InstorePayRecord VALUES ( '340', '310', '50');
+--INSERT INTO InstorePayRecord VALUES ( '440', '460', '50');
+--INSERT INTO InstorePayRecord VALUES ( '250', '280', '50');
+--INSERT INTO InstorePayRecord VALUES ( '350', '300', '50');
+--INSERT INTO InstorePayRecord VALUES ( '450', '480', '50');
+--INSERT INTO InstorePayRecord VALUES ( '260', '290', '50');
+--INSERT INTO InstorePayRecord VALUES ( '360', '380', '50');
+--INSERT INTO InstorePayRecord VALUES ( '460', '450', '50');
+--INSERT INTO InstorePayRecord VALUES ( '270', '200', '50');
+--INSERT INTO InstorePayRecord VALUES ( '370', '300', '50');
+--INSERT INTO InstorePayRecord VALUES ( '470', '420', '50');
+--INSERT INTO InstorePayRecord VALUES ( '480', '410', '50');
+
+--select * from InstorePayRecord
+
+
+--INSERT INTO InstorePay VALUES ('PAY0010', '200', '20210615', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0009', '300', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0008', '400', '20210515', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0007', '210', '20210615', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0006', '310', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0005', '410', '20210515', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0004', '220', '20210615', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0003', '320', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0002', '420', '20210513', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0001', '230', '20210613', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0011', '330', '20210531', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0018', '430', '20210513', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0013', '240', '20210612', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0012', '340', '20210508', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0014', '440', '20210525', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0015', '250', '20210622', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0016', '350', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0018', '450', '20210529', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0017', '260', '20210615', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0019', '360', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0020', '460', '20210515', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0021', '270', '20210615', '20210606', '20210612');
+--INSERT INTO InstorePay VALUES ('PAY0022', '370', '20210530', '20210522', '20210528');
+--INSERT INTO InstorePay VALUES ('PAY0023', '470', '20210512', '20210506', '20210512');
+--INSERT INTO InstorePay VALUES ('PAY0024', '480', '20210511', '20210506', '20210512');
+
+--select * from InstorePay
+
+--INSERT INTO InstoreShift VALUES ( '10', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0010');
+--INSERT INTO InstoreShift VALUES ( '09', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0009');
+--INSERT INTO InstoreShift VALUES ( '08', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0008');
+--INSERT INTO InstoreShift VALUES ( '07', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0007');
+--INSERT INTO InstoreShift VALUES ( '06', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0006');
+--INSERT INTO InstoreShift VALUES ( '05', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0005');
+--INSERT INTO InstoreShift VALUES ( '03', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0004');
+--INSERT INTO InstoreShift VALUES ( '04', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0003');
+--INSERT INTO InstoreShift VALUES ( '02', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0002');
+--INSERT INTO InstoreShift VALUES ( '01', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0001');
+--INSERT INTO InstoreShift VALUES ( '11', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0011');
+--INSERT INTO InstoreShift VALUES ( '12', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0012');
+--INSERT INTO InstoreShift VALUES ( '13', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0013');
+--INSERT INTO InstoreShift VALUES ( '14', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0014');
+--INSERT INTO InstoreShift VALUES ( '15', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0015');
+--INSERT INTO InstoreShift VALUES ( '16', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0016');
+--INSERT INTO InstoreShift VALUES ( '17', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0017');
+--INSERT INTO InstoreShift VALUES ( '18', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0018');
+--INSERT INTO InstoreShift VALUES ( '19', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0019');
+--INSERT INTO InstoreShift VALUES ( '20', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0020');
+--INSERT INTO InstoreShift VALUES ( '21', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0021');
+--INSERT INTO InstoreShift VALUES ( '22', '20210606', '04:00:00 PM', '20210612', '11:30:00 PM', 'S0001', 'PAY0022');
+--INSERT INTO InstoreShift VALUES ( '23', '20210528', '04:00:00 PM', '20210528', '11:30:00 PM', 'S0001', 'PAY0023');
+--INSERT INTO InstoreShift VALUES ( '24', '20210512', '04:00:00 PM', '20210512', '11:30:00 PM', 'S0001', 'PAY0024');
+
+--select * from InstoreShift
+
+---- 2.2.2 Implement the following queries (make sure to populate with enough and proper data into related tables so that non-void result is shown for each query.
+
+----Q.1 For a instore staff with id number xxx (S0003), print his/her 1stname, lname, and hourly payment rate.
+
+--SELECT  fName, lName, HourlyRate
+--FROM    InstoreStaff
+--WHERE   StaffId='S0003'
+
+
+
+----Q.2 List all the ingredient details of a menu item named xxx (Seafood).
+
+--SELECT  i.Name
+--FROM    MenuItemMadeofIngredients m, MenuItem n, Ingredients i
+--WHERE  m.ItemCode = n.ItemCode AND m.Code = i.Code AND n.Name = 'Seafood' 
+
+
+----Q.3 List all the shift details of a delivery staff with first name xxx and last name ttt between date yyy and zzz
+
+--SELECT *
+--FROM	 DriverShift d, DriverStaff s
+--WHERE s.fName = 'Mona' AND s.lName = 'Katelyn' AND
+--	 d.StartDate BETWEEN'2021-06-01' AND '2021-06-30';
+
+
+
+----Q.4 List all the order details of the orders that are made by a walk-in customer with first name xxx and last name ttt between date yyy and zzz.
+
+----SELECT  *
+----FROM    Orders o, Customer c, WalkInOrder w
+----WHERE   o.OrderNo = w.OrderNo AND c.firstName = 'Felipe' 
+----            AND c.lastname = 'Silva' AND c.CustomerID=o.CustomerID
+----            AND o.OrderDateTime BETWEEN'2021-06-01' AND '2021-06-30';
+
+----List all the order details of the orders that are taken by an in-office staff with first name xxx and last name ttt between date yyy and zzz.
+
+--SELECT   *
+--FROM    Orders o, InstoreStaff i
+--WHERE   i.StaffId = o.StaffId 
+--        AND i.fName = 'Maria' AND i.lName = 'Jane'
+--        AND o.OrderDateTime BETWEEN'2021-06-01' AND '2021-06-30';
+
+ 
+---Print the salary paid to a delivery staff named xxx in the current month. Note the current month is the current month that is decided by the system.
+
+--SELECT  p.TotalAmountPaid as 'salary paid'
+--FROM    DriverPay p, DriverShift s, DriverStaff d
+--WHERE   s.DriverpayRecordId = p.RecordId
+--    AND s.StaffId = d.StaffId
+--    AND d.fName = 'Mona'
+--    AND Month(p.Date) = Month(GetDate())
+
+
+
+
+----------------------------------------TRUNCATE----------------------------------------
+--TRUNCATE TABLE DeliveryOrder;
+--TRUNCATE TABLE DriverShift
+--TRUNCATE TABLE DriverStaff
+--TRUNCATE TABLE PickupOrder
+--TRUNCATE TABLE WalkInOrder
+--TRUNCATE TABLE PhoneOrder
+--TRUNCATE TABLE QuantityOrderMenuItem
+--TRUNCATE TABLE Orders
+--TRUNCATE TABLE Customer
+--TRUNCATE TABLE MenuItemMadeofIngredients
+--TRUNCATE TABLE MenuItem
+--TRUNCATE TABLE MenuSellingPrice
+--TRUNCATE TABLE IngredientsQuantityIngredientOrder
+--TRUNCATE TABLE Ingredients
+--TRUNCATE TABLE IngredientStock
+--TRUNCATE TABLE IngredientOrder
+--TRUNCATE TABLE InstoreShift
+--TRUNCATE TABLE DriverPay
+--TRUNCATE TABLE DriverPayRecord
+--TRUNCATE TABLE InstorePay
+--TRUNCATE TABLE InstorePayRecord
+--TRUNCATE TABLE InstoreStaff
+--Table#1
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE InstoreStaff
+--ADD Salary int;
+--ALTER TABLE InstoreStaff
+--Alter column Salary varchar;
+--ALTER TABLE InstoreStaff
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(Salary, contactNO);
+--ALTER TABLE InstoreStaff
+--ADD CHECK (HourlyRate>=20);
+--ALTER TABLE InstoreStaff
+--ADD CHECK (HourlyRate<=30);
+--ALTER TABLE  InstoreStaff
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'InstoreStaff', 'StoreStaff';
+--EXEC sp_rename 'StoreStaff', 'InstoreStaff';
+--exec sp_rename 'InstoreStaff.Salary', 'Salaries', 'COLUMN';
+--exec sp_rename 'InstoreStaff.Salaries', 'Salary', 'COLUMN';
+--ALTER TABLE InstoreStaff
+--drop COLUMN Salaries;
+--UPDATE InstoreStaff
+--SET fName = 'Khan', lName='sab'
+--WHERE StaffId = 'S0002';
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM InstoreStaff
+--WHERE fName='Angel' AND lName='kota';
+--SELECT * FROM InstoreStaff
+--WHERE StaffId='S0002' OR HourlyRate='30';
+--SELECT * FROM InstoreStaff
+--WHERE NOT lName='Kota';
+--SELECT * FROM InstoreStaff
+--WHERE fName LIKE 'a%';
+--SELECT * FROM InstoreStaff
+--WHERE fName LIKE '%a';
+--SELECT * FROM InstoreStaff
+--WHERE fName LIKE '_n%';
+--SELECT * FROM InstoreStaff
+--WHERE fName LIKE 'a__%';
+--SELECT * FROM InstoreStaff
+--WHERE lName LIKE 'k%a';
+--SELECT * FROM InstoreStaff
+--WHERE fName NOT LIKE 'I%';
+--SELECT * FROM InstoreStaff
+--WHERE HourlyRate BETWEEN 20 AND 30;
+-----------------------3)distinct----------
+--select distinct fName from InstoreStaff;
+--select distinct lName from InstoreStaff;
+--select distinct ContactNo from InstoreStaff;
+--select distinct bName from InstoreStaff;
+----select distinct Status from InstoreStaff;
+--select count(distinct HourlyRate)from InstoreStaff;
+--select top 2 address from InstoreStaff;
+--select top 3 fname from InstoreStaff;
+--select * from InstoreStaff order by HourlyRate;
+--select * from InstoreStaff order by fName;
+--select * from InstoreStaff order by HourlyRate desc;
+--SELECT * FROM InstoreStaff WHERE fName like 'a%';
+--SELECT COUNT(lName), lName FROM InstoreStaff GROUP BY LName;
+------------------agregate function----------------------
+--select count(*) from InstoreStaff
+--select count (accNo) from InstoreStaff
+--select count(*) from InstoreStaff where StaffId='S0001'
+--select count(*) from InstoreStaff where StaffId='S0001' and fName='Angle'
+------------------procedure with parameter----------------------
+--alter procedure InstoreStaffproc
+-- @fName VARCHAR(50),
+--@StaffId VARCHAR(10)
+--as begin 
+--select * from InstoreStaff where fName=@fName or StaffId=@StaffId end
+--exec InstoreStaffproc  @fName='Angle', @StaffId='S0001'
+--create procedure InstoreStaffprocc
+-- @StaffId VARCHAR(10)
+--as begin 
+--select * from InstoreStaff where StaffId=@StaffId end
+----exec InstoreStaffprocc  @StaffId='S0001'
+--create procedure InstoreStaffproc3
+-- @ContactNo CHAR(10)
+--as begin 
+--select * from InstoreStaff where ContactNo=@ContactNo end
+--exec InstoreStaffproc3  @ContactNo='0411223301'
+------------------agregaate function---------------------
+--select * from InstoreStaff
+--update InstoreStaff set fName='Angele' where StaffId='S0002'
+--Table#2
+------------------------------------ALTER QUERIES----------------------------------
+--add New Column  in customer table
+--ALTER TABLE customer
+--ADD email varchar(40);
+--changing the data type of a column in a customer table
+--ALTER TABLE customer
+--ALTER COLUMN email varchar(40);
+--ADDing UNIQUE CONSTRAINT to a customer table
+--ALTER TABLE customer
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(email, phoneNumber);
+--DROP CONSTRAINT from a customer table
+--ALTER TABLE customer
+--DROP CONSTRAINT MyUniqueConstraint;
+--delete a column in a customer table
+--EXEC sp_rename 'Customer', 'Customers';
+--EXEC sp_rename 'Customers', 'Customer';
+--sp_rename 'Customer.email', 'Gmail', 'COLUMN';
+--sp_rename 'Customer.Gmail', 'Email', 'COLUMN';
+--ALTER TABLE Customer
+--ADD FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID);
+--ALTER TABLE customer
+--drop COLUMN email;
+--UPDATE Customer
+--SET firstName = 'Khan'
+--WHERE CustomerID = 'C2042';
+------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM Customer
+--WHERE firstName='Fabian' AND CustomerID='C2041';
+--SELECT * FROM Customer
+--WHERE CustomerID='C2042' OR lastname='Silvaa';
+--SELECT * FROM Customer
+--WHERE NOT firstName='Felipe';
+--SELECT * FROM Customer
+--WHERE lastname LIKE 's%';
+--SELECT * FROM Customer
+--WHERE firstName LIKE '%n';
+--SELECT * FROM Customer
+--WHERE lastname LIKE '_i%';
+--SELECT * FROM Customer
+--WHERE firstName LIKE 'F__%';
+--SELECT * FROM Customer
+--WHERE lastname LIKE 's%a';
+--SELECT * FROM Customer
+--WHERE firstName NOT LIKE 'F%';
+--SELECT * FROM Customer
+--WHERE phoneNumber BETWEEN 0422410808 AND 0422410807;
+-----------------------3)distinct----------
+--------select distinct firstName from customer;
+------select distinct lastName from customer;
+--------select distinct Address from customer;
+--------select distinct phoneNumber from customer;
+------select count(distinct phoneNumber)from customer;
+------select top 2 address from customer;
+------select top 3 firstname from customer;
+------select * from customer order by firstName;
+------select * from customer order by address;
+------select * from customer order by phoneNumber desc;
+------SELECT * FROM customer WHERE firstName like 'a%';
+------SELECT COUNT(address), firstName FROM customer GROUP BY firstname;
+------------------procedure----------------------
+--create procedure Customerproc1
+--as begin 
+--select CustomerID,firstName from Customer  end
+----exec Customerproc1 
+--create procedure Customerproc2
+--as begin 
+--select * from Customer  end
+--exec Customerproc2
+--create procedure Customerproc3
+--as begin 
+--select CustomerID,lastname from Customer  end
+--exec Customerproc3
+--create procedure Customerproc4
+--as begin 
+--select phoneNumber from Customer  end
+--exec Customerproc4
+--create procedure Customerproc5
+--as begin 
+--select CustomerID,firstName,phoneNumber from Customer  end
+----exec Customerproc5
+--TABLE#3
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE Orders
+--ADD Total_order int;
+--ALTER TABLE COLUMN';
+--sp_rename 'WalkInOrder.newOrders', 'new_order', 'COLUMN';
+--ALTER TABLE WalkInOrder
+--drop COLUMN new_order;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo='00001' AND WalkInTime='20210618 10:40:09 PM';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo='00005' OR WalkInTime='20210618 10:40:09 PM';
+--SELECT * FROM WalkInOrder
+--WHERE NOT OrderNo='00004';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo LIKE '0%';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo LIKE '%5';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo LIKE '_0%';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo LIKE '0__%';
+----SELECT * FROM WalkInOrderOrders
+----Alter column Total_order int not null;
+----ALTER TABLE Orders
+----ADD CONSTRAINT MyUniqueConstraint UNIQUE(Total_order);
+----ALTER TABLE Orders
+----ADD CHECK (OrderNO>=00003);
+----ALTER TABLE Orders
+----ADD CHECK (OrderNO<=00003);
+----ALTER TABLE  Orders
+----DROP CONSTRAINT MyUniqueConstraint;
+----EXEC sp_rename 'Orders', 'All_Orders';
+----EXEC sp_rename 'All_Orders', 'Orders';
+----sp_rename 'Orders.Total_Order', 'All_Orders', 'COLUMN';
+----sp_rename 'Orders.All_Orders', 'Total_Order', 'COLUMN';
+----ALTER TABLE Orders
+----drop COLUMN Total_Order;
+----UPDATE Orders
+----SET OrderType = 'Pickup'
+----WHERE OrderNo = '00002';
+---------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+----SELECT * FROM Orders
+----WHERE OrderNo='00001' AND OrderType='Delivery';
+----SELECT * FROM Orders
+----WHERE OrderNo='00006' OR CustomerID='C2042';
+----SELECT * FROM Orders
+----WHERE NOT CustomerID='C2042';
+----SELECT * FROM Orders
+----WHERE OrderType LIKE 'D%';
+----SELECT * FROM Orders
+----WHERE OrderType LIKE '%p';
+----SELECT * FROM Orders
+----WHERE OrderType LIKE '_i%';
+----SELECT * FROM Orders
+----WHERE OrderType LIKE 'D__%';
+----SELECT * FROM Orders
+----WHERE OrderType LIKE 'P%p';
+----SELECT * FROM Orders
+----WHERE OrderType NOT LIKE 'D%';
+----SELECT * FROM Orders
+----WHERE OrderNo BETWEEN 00001 AND 00004;
+-------------------------3)distinct----------
+----------select distinct orderdatetime from orders;
+----------select distinct ordertype from orders;
+----------select distinct TotalAmountDue from orders;
+----------select distinct orderstatus from orders;
+----------select count(distinct orderdatetime)from orders;
+----------select top 2 totalamountdue from orders;
+----------select top 3 orderstatus from orders;
+----------select top 4 customerId from orders;
+----------select * from orders order by orderdatetime;
+----------select * from orders order by ordertype;
+----------select * from orders order by TotalAmountDue ;
+----------SELECT * FROM orders WHERE totalamountdue> 500;
+----------SELECT COUNT(ordertype), ordertype FROM orders GROUP BY ordertype;
+--------select firstName,lastname,OrderDateTime,TotalAmountDue from Orders  inner join Customer on Orders.CustomerID=Customer.CustomerID;
+--------select firstName,lastname,OrderDateTime,TotalAmountDue,WalkInTime from Orders  inner join Customer on Orders.CustomerID=Customer.CustomerID
+--------inner join WalkInOrder on Orders.OrderNo=WalkInOrder.OrderNo;
+--------select firstName,lastname,OrderNo from Orders  inner join Customer on Orders.CustomerID=Customer.CustomerID where OrderNo between 2 and 5;
+--------select firstName,OrderNo from Orders  cross join Customer where Orders.CustomerID=Customer.CustomerID and OrderNo between 3 and 5;
+----------select * from Orders,Customer where OrderNo=6;
+--------select firstName,OrderNo,OrderStatus from Orders  inner join Customer on Orders.CustomerID=Customer.CustomerID;
+--------select * from Customer  right join Orders on Orders.CustomerID=Customer.CustomerID;
+--------select firstName,OrderNo,OrderStatus from Orders  left join Customer on Orders.CustomerID=Customer.CustomerID;
+--------select * from Customer  full join Orders on Orders.CustomerID=Customer.CustomerID;
+--------select phoneNumber as'p',OrderType as 'o',OrderNo as'n' from Orders,Customer where OrderNo between 3 and 5 and lastname like '%va';
+--------select phoneNumber as'p',OrderType as 'o',OrderNo as'n' from Orders,Customer where OrderNo between 3 and 5 and lastname like 's%';
+----------join on InstoreStaff and orders
+----------select fName,lName,ADDRESS from InstoreStaff  inner join Orders on InstoreStaff.StaffId=Orders.StaffId;
+----------select ADDRESS,ContactNo from InstoreStaff  inner join Orders on InstoreStaff.StaffId=Orders.StaffId;
+----------select taxFileNo, BankCode,bName,accNo from InstoreStaff cross join Orders where InstoreStaff.StaffId=Orders.StaffId and taxFileNo between 1 and 10;
+----------select * from InstoreStaff,Orders where HourlyRate>100;
+----------select Status,HourlyRate from InstoreStaff inner join Orders on InstoreStaff.StaffId=Orders.StaffId;
+----------select * from InstoreStaff right join Orders on  InstoreStaff.StaffId=Orders.StaffId;
+----------select * from InstoreStaff full join Orders on InstoreStaff.StaffId=Orders.StaffId;
+----------select fName as'FN',lName as 'LN'from InstoreStaff,Orders where fName like 'a%';
+----------select taxFileNo as'tax',bName as 'BN' from InstoreStaff,Orders where bName like 'm%';
+--------------------procedure----------------------
+----create procedure Ordersproc1
+----as begin 
+----select OrderNo,OrderDateTime from Orders  end
+----exec Ordersproc1 
+----create procedure Ordersproc2
+----as begin 
+----select OrderNo,OrderType from Orders  end
+----exec Ordersproc2
+----create procedure Ordersproc3
+----as begin 
+----select * from Orders  end
+----exec Ordersproc3
+----create procedure Ordersproc4
+----as begin 
+----select OrderNo,TotalAmountDue from Orders  end
+----exec Ordersproc4
+----create procedure Ordersproc5
+----as begin 
+----select OrderNo,TotalAmountDue from Orders  end
+----exec Ordersproc5
+----create procedure Ordersproc6
+----as begin 
+----select OrderNo,PaymentMethod from Orders  end
+----exec Ordersproc6
+----create procedure Ordersproc7
+----as begin 
+----select OrderNo,PaymentApprovalNo from Orders  end
+----exec Ordersproc7
+----create procedure Ordersproc8
+----as begin 
+----select OrderNo,OrderStatus from Orders  end
+----exec Ordersproc8
+----create procedure Ordersproc9
+----as begin 
+----select OrderNo,StaffId from Orders  end
+----exec Ordersproc9
+----create procedure Ordersproc0
+----as begin 
+----select OrderNo,CustomerID from Orders  end
+----exec Ordersproc0
+--------------------agregate function----------------------
+----select count(*) from Orders
+----TABLE#4
+--------------------------------------ALTER QUERIES----------------------------------
+----ALTER TABLE WalkInOrder
+----ADD new_order int;
+----ALTER TABLE WalkInOrder
+----Alter column new_order int not null;
+----ALTER TABLE WalkInOrder
+----ADD CONSTRAINT MyUniqueConstraint UNIQUE(new_order);
+----ALTER TABLE WalkInOrder
+----ADD CHECK (OrderNO>=00001);
+----ALTER TABLE WalkInOrder
+----ADD CHECK (OrderNO<=00005);
+----ALTER TABLE  WalkInOrder
+----DROP CONSTRAINT MyUniqueConstraint;
+----EXEC sp_rename 'WalkInOrder', 'WalkIn_Order';
+----EXEC sp_rename 'WalkIn_Order', 'WalkInOrder';
+----sp_rename 'WalkInOrder.new_order', 'newOrders', '
+--WHERE OrderNo LIKE '0%5';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo NOT LIKE '0%';
+--SELECT * FROM WalkInOrder
+--WHERE OrderNo BETWEEN 00001 AND 00005;
+------select WalkInTime,OrderDateTime,TotalAmountDue from Orders  inner join WalkInOrder on Orders.OrderNo=WalkInOrder.OrderNo;
+------select WalkInTime,OrderDateTime,TotalAmountDue from Orders  inner join WalkInOrder on Orders.OrderNo=WalkInOrder.OrderNo where Orders.OrderNo between 2 and 5;
+------select WalkInTime,OrderDateTime,TotalAmountDue from Orders  cross join WalkInOrder where Orders.OrderNo=WalkInOrder.OrderNo and Orders.OrderNo=5;
+------select * from Orders,WalkInOrder where Orders.OrderNo=6;
+------select WalkInTime,OrderDateTime,TotalAmountDue from Orders right join WalkInOrder on Orders.OrderNo=WalkInOrder.OrderNo;
+------select WalkInTime,OrderDateTime,TotalAmountDue from WalkInOrder left join Orders on Orders.OrderNo=WalkInOrder.OrderNo;
+------select * from WalkInOrder  full join Orders on Orders.OrderNo=WalkInOrder.OrderNo;
+------select WalkInTime as'w',OrderType as 'o',Orders.OrderNo as'n' from Orders,WalkInOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%1';
+------select WalkInTime as'w',OrderType as '0',Orders.OrderNo as'n' from Orders,WalkInOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%5%';
+--Table#5
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE PhoneOrder
+--ADD deliver_order int;
+--ALTER TABLE PhoneOrder
+--Alter column deliver_order int not null;
+--ALTER TABLE PhoneOrder
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(deliver_order);
+--ALTER TABLE PhoneOrder
+--ADD CHECK (OrderNO>=00002);
+--ALTER TABLE PhoneOrder
+--ADD CHECK (OrderNO<=00006);
+--ALTER TABLE  PhoneOrder
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'PhoneOrder', 'phone_Order';
+--EXEC sp_rename 'phone_Order', 'PhoneOrder';
+--sp_rename 'PhoneOrder.deliver_order', 'deliverorder', 'COLUMN';
+--sp_rename 'PhoneOrder.deliverorder', 'deliver_order', 'COLUMN';
+--ALTER TABLE PhoneOrder
+--drop COLUMN deliver_order;
+-----------------------3)distinct----------
+------------select distinct Timecallanswered from phoneorder;
+------------select distinct timecallterminated from phoneorder;
+------------select top 2 timecallanswered from phoneorder;
+------------select top 3 timecallterminated from phoneorder;
+------------select * from phoneorder order by timecallterminated;
+------------SELECT COUNT(timecallanswered), timecallanswered FROM phoneorder GROUP BY timecallanswered;
+------select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  inner join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+------select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  inner join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo where Orders.OrderNo between 2 and 5;
+--------select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  cross join PhoneOrder where Orders.OrderNo=PhoneOrder.OrderNo and Orders.OrderNo=3;
+------select * from Orders,PhoneOrder where Orders.OrderNo=3;
+------select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  right join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+------select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  left join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+------select * from PhoneOrder  full join Orders on Orders.OrderNo=PhoneOrder.OrderNo;
+------select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%1';
+------select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%5%';
+-----------both procedure--------------------------------------------------
+--create procedure PhoneOrderproc
+-- @OrderNo CHAR(10),
+--@TimeCallAnswered DATETIME2
+--as begin 
+--select * from PhoneOrder where OrderNo=@OrderNo or TimeCallAnswered=@TimeCallAnswered end
+  --exec PhoneOrderproc  @OrderNo='00003', @TimeCallAnswered='20210618'
+--  create procedure PhoneOrderpro2
+--as begin 
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  inner join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo end
+  --exec PhoneOrderpro2
+--    create procedure PhoneOrderpro3
+--as begin 
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  cross join PhoneOrder where Orders.OrderNo=PhoneOrder.OrderNo and Orders.OrderNo=3 end
+  --exec PhoneOrderpro3
+-- create procedure PhoneOrderpro4
+--as begin 
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  right join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo end
+  --exec PhoneOrderpro4
+--   create procedure PhoneOrderpro5
+--as begin 
+--select * from PhoneOrder  full join Orders on Orders.OrderNo=PhoneOrder.OrderNo end
+  --exec PhoneOrderpro5
+--     create procedure PhoneOrderpro6
+--as begin 
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  left join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo end
+  --exec PhoneOrderpro6
+--    create procedure PhoneOrderpro7
+--as begin 
+--select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%1' end
+  --exec PhoneOrderpro7
+--create procedure PhoneOrderpro8
+--as begin 
+--select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%5%' end
+  --exec PhoneOrderpro8
+-----------both procedure--------------------------------------------------
+
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  inner join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  inner join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo where Orders.OrderNo between 2 and 5;
+----select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  cross join PhoneOrder where Orders.OrderNo=PhoneOrder.OrderNo and Orders.OrderNo=3;
+--select * from Orders,PhoneOrder where Orders.OrderNo=3;
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  right join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+--select TimeCallAnswered,OrderDateTime,TotalAmountDue,TimeCallTerminated from Orders  left join PhoneOrder on Orders.OrderNo=PhoneOrder.OrderNo;
+--select * from PhoneOrder  full join Orders on Orders.OrderNo=PhoneOrder.OrderNo;
+--select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%1';
+--select TimeCallAnswered as't',OrderDateTime as 'ot',Orders.OrderNo as'n' from Orders,PhoneOrder where Orders.OrderNo between 3 and 5 and PaymentApprovalNo like '%5%';
+--TABLE#6
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE DriverPayRecord
+--ADD Amount_check int;
+--ALTER TABLE DriverPayRecord
+--Alter column Amount_check int not null;
+--ALTER TABLE DriverPayRecord
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(Amount_check);
+--ALTER TABLE DriverPayRecord
+--ADD CHECK (TotalAmountPaid>=300);
+--ALTER TABLE DriverPayRecord
+--ADD CHECK (TotalAmountPaid<=333);
+--ALTER TABLE  DriverPayRecord
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'DriverPayRecord', 'Pay_record';
+--EXEC sp_rename 'Pay_record', 'DriverPayRecord';
+--sp_rename 'DriverPayRecord.Amount_check', 'Amountcheck', 'COLUMN';
+--sp_rename 'DriverPayRecord.Amountcheck', 'Amount_check', 'COLUMN';
+--ALTER TABLE DriverPayRecord
+--drop COLUMN Amount_check;
+--UPDATE DriverPayRecord
+--SET TaxWithheld = '90'
+--WHERE GrossPayment = '360';
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid='300' AND TaxWithheld='60';
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid='353' OR GrossPayment='420';
+--SELECT * FROM DriverPayRecord
+--WHERE NOT GrossPayment='420';
+--SELECT * FROM DriverPayRecord
+--WHERE GrossPayment LIKE '4%';
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid LIKE '%3';
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid LIKE '_0%';
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid LIKE '3__%';
+--SELECT * FROM DriverPayRecord
+--WHERE TotalAmountPaid LIKE '3%0';
+--SELECT * FROM DriverPayRecord
+--WHERE GrossPayment NOT LIKE '4%';
+--SELECT * FROM DriverPayRecord
+--WHERE TaxWithheld BETWEEN 30 AND 70;
+-----------------------3)distinct----------
+--------select distinct Grosspayment from DriverPayRecord;
+--------select distinct taxwithheld from DriverPayRecord;
+--------select count(distinct grosspayment)from DriverPayRecord;
+--------select top 2 grosspayment from DriverPayRecord;
+--------select * from DriverPayRecord order by taxwithheld;
+--------SELECT * FROM DriverPayRecord WHERE grosspayment> 200;
+--------alter constranit---------
+--alter table DriverPayRecord alter column GrossPayment int;
+--alter table DriverPayRecord alter column TaxWithheld int;
+------------------agregate function----------------------
+--select sum(TaxWithheld) from DriverPayRecord
+--select sum(GrossPayment) from DriverPayRecord
+--select max(TaxWithheld) from DriverPayRecord
+--select max(GrossPayment) from DriverPayRecord
+--select min(TaxWithheld) from DriverPayRecord
+--select min(GrossPayment) from DriverPayRecord
+--select count(*) from DriverPayRecord
+--select count (TotalAmountPaid) from DriverPayRecord
+--select count(*) from DriverPayRecord where TaxWithheld='60'
+----select count(TaxWithheld) from DriverPayRecord where TaxWithheld='60' or TotalAmountPaid='330'
+---------------**multiple agregate function -------------
+--select TaxWithheld,max(TaxWithheld) from DriverPayRecord group by TaxWithheld
+--select GrossPayment,max(TaxWithheld) from DriverPayRecord group by GrossPayment
+--select TotalAmountPaid,max(TaxWithheld) from DriverPayRecord group by TotalAmountPaid
+--select TaxWithheld,max(TaxWithheld) from DriverPayRecord group by TaxWithheld having min(GrossPayment)>200;
+--SELECT   TotalAmountPaid, SUM(TaxWithheld) FROM   DriverPayRecord GROUP BY TotalAmountPaid ORDER BY  TotalAmountPaid DESC;
+--TABLE#7
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE DriverPay
+--ADD Amount_check int;
+--ALTER TABLE DriverPay
+--Alter column Amount_check int not null;
+--ALTER TABLE DriverPay
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(Amount_check);
+--ALTER TABLE DriverPay
+--ADD CHECK (TotalAmountPaid>=300);
+--ALTER TABLE DriverPay
+--ADD CHECK (TotalAmountPaid<=333);
+--ALTER TABLE  DriverPay
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'DriverPay', 'Pay_record';
+--EXEC sp_rename 'Pay_record', 'DriverPay';
+--sp_rename 'DriverPay.Amount_check', 'Amountcheck', 'COLUMN';
+--sp_rename 'DriverPay.Amountcheck', 'Amount_check', 'COLUMN';
+--ALTER TABLE DriverPay
+--drop COLUMN Amount_check;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM DriverPay
+--WHERE RecordId='P0014' AND TotalAmountPaid='330';
+--SELECT * FROM DriverPay
+--WHERE RecordId='P0014' OR TotalAmountPaid='333';
+--SELECT * FROM DriverPay
+--WHERE NOT TotalAmountPaid='350';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid LIKE '3%';
+--SELECT * FROM DriverPay
+--WHERE RecordId LIKE '%3';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid LIKE '_0%';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid LIKE '3__%';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid LIKE '3%0';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid NOT LIKE '3%';
+--SELECT * FROM DriverPay
+--WHERE TotalAmountPaid BETWEEN 303 AND 353;
+-----------------------3)distinct----------
+------------select distinct totalamountpaid from driverpay;
+------------select distinct date from driverpay;
+------------select distinct periodstartdate from driverpay;
+------------select count(distinct date)from driverpay;
+------------select top 2 totalamountpaid from driverpay;
+------------select top 3 date from driverpay;
+------------select * from driverpay order by totalamountpaid;
+------------select * from driverpay order by date;
+------------SELECT * FROM driverpay WHERE totalamountpaid> 100;
+------------SELECT COUNT(date), periodstartdate FROM driverpay GROUP BY periodstartdate;
+---------- join on driverpayrecord and driverpay
+--------select GrossPayment,TaxWithheld from DriverPayRecord inner join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid;
+--------select GrossPayment from DriverPayRecord inner join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid where GrossPayment between 500 and 1000;
+--------select GrossPayment,TaxWithheld from DriverPayRecord cross join DriverPay where DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid and GrossPayment between 1000 and 2000;
+--------select * from DriverPayRecord,DriverPay where GrossPayment=1000;
+--------select * from DriverPayRecord,DriverPay where TaxWithheld=1500;
+--------select * from DriverPayRecord full join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid;
+---- join on driverpayrecord and driverpay
+--select GrossPayment,TaxWithheld from DriverPayRecord inner join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid;
+--select GrossPayment from DriverPayRecord inner join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid where GrossPayment between 500 and 1000;
+--select GrossPayment,TaxWithheld from DriverPayRecord cross join DriverPay where DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid and GrossPayment between 1000 and 2000;
+--select * from DriverPayRecord,DriverPay where GrossPayment=1000;
+--select * from DriverPayRecord,DriverPay where TaxWithheld=1500;
+--select * from DriverPayRecord full join DriverPay on DriverPayRecord.TotalAmountPaid=DriverPay.TotalAmountPaid;
+--TABLE#8
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE DriverShift
+--ADD total_shift int;
+--ALTER TABLE DriverShift
+--Alter column total_shift int not null;
+--ALTER TABLE DriverShift
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(total_shift);
+--ALTER TABLE DriverShift
+--ADD CHECK (RecordId>=000221);
+--ALTER TABLE DriverShift
+--ADD CHECK (RecordId<=000322);
+--ALTER TABLE  DriverShift
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'DriverShift', 'Driver_Shift';
+--EXEC sp_rename 'Driver_Shift', 'DriverShift';
+--sp_rename 'DriverShift.total_shift', 'totalshift', 'COLUMN';
+--sp_rename 'DriverShift.totalshift', 'total_shift', 'COLUMN';
+--ALTER TABLE DriverShift
+--drop COLUMN total_shift;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM DriverShift
+--WHERE StaffId='SA005' AND RecordId='000322';
+--SELECT * FROM DriverShift
+--WHERE DriverPayRecordId='P0022' OR RecordId='000222';
+--SELECT * FROM DriverShift
+--WHERE NOT RecordId='000222';
+--SELECT * FROM DriverShift
+--WHERE DriverPayRecordId LIKE 'P%';
+--SELECT * FROM DriverShift
+--WHERE RecordId LIKE '%1';
+--SELECT * FROM DriverShift
+--WHERE StaffId LIKE '_A%';
+--SELECT * FROM DriverShift
+--WHERE DriverPayRecordId LIKE 'P__%';
+--SELECT * FROM DriverShift
+--WHERE DriverPayRecordId LIKE 'P%2';
+--SELECT * FROM DriverShift
+--WHERE StaffId NOT LIKE 'S%';
+--SELECT * FROM DriverShift
+--WHERE RecordId BETWEEN 000221 AND 000321;
+----------join on driverstaff and drivershift
+--------select fName,lName from DriverStaff  inner join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--------select Address,ContactNo from DriverStaff inner join DriverShift on DriverStaff.StaffId=DriverShift.StaffId where DriverStaff.StaffId between 1 and 5;
+--------select taxFileNo,BankCode,bName,accNo from DriverStaff  cross join DriverShift where DriverStaff.StaffId=DriverShift.StaffId and DriverShift.StaffId=5;
+--------select * from DriverStaff,DriverShift where DriverShift.StaffId=6;
+--------select fName,Status from DriverStaff right join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--------select fName,lName,DeliveryRate,DriverLicense from DriverStaff left join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--------select * from DriverStaff full join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--------select Address as'ad',contactno as 'cn',DriverStaff.StaffId as'id' from DriverStaff,DriverShift where  DriverStaff.StaffId between 1 and 5 and StartTime like '%1';
+-----------------------3)distinct----------
+----------select distinct startdate from Drivershift;
+----------select distinct starttime from DriverShift;
+----------select distinct driverpayrecordid from DriverShift;
+----------select count(distinct startdate)from DriverShift;
+----------select top 2 staffid from DriverShift;
+----------select top 3 enddate from Drivershift;
+----------select top 4 driverpayrecordid from drivershift;
+----------select * from Drivershift order by startdate;
+----------select * from DriverShift order by enddate ;
+----------select * from DriverShift order by driverpayrecordid ;
+------------------agregate function----------------------
+--select count (DriverPayRecordId) from DriverShift
+--select count(*) from DriverShift where StartDate='20210606'
+--select count(*) from DriverShift where StartDate='20210606' or RecordId='000223'
+----join on driverstaff and drivershift
+--select fName,lName from DriverStaff  inner join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--select Address,ContactNo from DriverStaff inner join DriverShift on DriverStaff.StaffId=DriverShift.StaffId where DriverStaff.StaffId between 1 and 5;
+--select taxFileNo,BankCode,bName,accNo from DriverStaff  cross join DriverShift where DriverStaff.StaffId=DriverShift.StaffId and DriverShift.StaffId=5;
+--select * from DriverStaff,DriverShift where DriverShift.StaffId=6;
+--select fName,Status from DriverStaff right join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--select fName,lName,DeliveryRate,DriverLicense from DriverStaff left join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--select * from DriverStaff full join DriverShift on DriverStaff.StaffId=DriverShift.StaffId;
+--select Address as'ad',contactno as 'cn',DriverStaff.StaffId as'id' from DriverStaff,DriverShift where  DriverStaff.StaffId between 1 and 5 and StartTime like '%1';
+--TABLE#9
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE DeliveryOrder
+--ADD total_order int;
+--ALTER TABLE DeliveryOrder
+--Alter column total_order int not null;
+--ALTER TABLE DeliveryOrder
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(total_order);
+--ALTER TABLE DeliveryOrder
+--ADD CHECK (OrderNo>=00001);
+--ALTER TABLE DeliveryOrder
+--ADD CHECK (OrderNo<=00005);
+--ALTER TABLE  DeliveryOrder
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'DeliveryOrder', 'Delivery_Order';
+--EXEC sp_rename 'Delivery_Order', 'DeliveryOrder';
+--sp_rename 'DeliveryOrder.total_order', 'totalorder', 'COLUMN';
+--sp_rename 'DeliveryOrder.totalorder', 'total_order', 'COLUMN';
+--ALTER TABLE DeliveryOrder
+--drop COLUMN total_order;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM DeliveryOrder
+--WHERE OrderNo='00001' AND Address='2/22 Riversdale rd';
+--SELECT * FROM DeliveryOrder
+--WHERE OrderNo='00005' OR Address='2/22 Riversdale rd';
+--SELECT * FROM DeliveryOrder
+--WHERE NOT Address='2/55 Marine rd';
+--SELECT * FROM DeliveryOrder
+--WHERE OrderNo LIKE '0%';
+--SELECT * FROM DeliveryOrder
+--WHERE OrderNo LIKE '%5';
+--SELECT * FROM DeliveryOrder
+--WHERE Address LIKE '_5%';
+--SELECT * FROM DeliveryOrder
+--WHERE Address LIKE '2__%';
+--SELECT * FROM DeliveryOrder
+--WHERE RecordId LIKE '0%2';
+--SELECT * FROM DeliveryOrder
+--WHERE Address NOT LIKE '2%';
+--SELECT * FROM DeliveryOrder
+--WHERE OrderNo BETWEEN 00001 AND 00005;
+-----------------------3)distinct----------
+--------------select distinct address from DeliveryOrder;
+--------------select distinct deliverytime from DeliveryOrder;
+--------------select distinct recordid from DeliveryOrder;
+--------------select count(distinct deliverytime)from DeliveryOrder;
+--------------select top 2 address from DeliveryOrder;
+--------------select top 3 deliverytime from DeliveryOrder;
+--------------select top 4 recordid from DeliveryOrder;
+--------------select * from DeliveryOrder order by address;
+--------------select * from DeliveryOrder order by deliverytime ;
+--------------SELECT COUNT(address), address FROM DeliveryOrder GROUP BY address;
+----------join on orders and deliveryorder
+--------select OrderDateTime,OrderType,TotalAmountDue from Orders  inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo;
+--------select TotalAmountDue,PaymentMethod,PaymentApprovalNo from Orders  inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo where PaymentApprovalNo between 1 and 5;
+--------select OrderStatus, CustomerID,StaffID from Orders cross join DeliveryOrder where Orders.OrderNo=DeliveryOrder.OrderNo and CustomerId between 2 and 5;
+--------select * from Orders,DeliveryOrder where TotalAmountDue>500;
+--------select OrderDateTime,OrderType from Orders inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo;
+--------select * from DeliveryOrder  right join Orders on  Orders.OrderNo=DeliveryOrder.OrderNo;
+--------select TotalAmountDue,OrderStatus,CustomerId from Orders left join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo;
+--------select * from DeliveryOrder  full join Orders on Orders.OrderNo=DeliveryOrder.OrderNo;
+--------select OrderDateTime as'O-D-T',OrderType as 'O-T',TotalAmountDue as'Total' from Orders,DeliveryOrder where TotalAmountDue between 500 and 1000;
+--------select OrderStatus as'status',CustomerID as 'CID' from Orders,DeliveryOrder where CustomerID between 3 and 5;
+----------join on drivershift and DeliveryOrder
+--------select StartDate,StartTime,EndDate,EndTime from DriverShift  inner join DeliveryOrder on DriverShift.RecordId=DeliveryOrder.RecordId;
+--------select StaffId,DriverPayRecordId from DriverShift  inner join DeliveryOrder on DriverShift.RecordId=DeliveryOrder.RecordId;
+--------select StartDate, EndDate from DriverShift cross join DeliveryOrder where DriverShift.RecordId=DeliveryOrder.RecordId;
+--------select * from DriverShift,DeliveryOrder where StaffId between 1 and 5;
+--------select StartTime,EndTime from DriverShift inner join DeliveryOrder on DriverShift.RecordId=DeliveryOrder.RecordId;
+--------select * from DriverShift right join DeliveryOrder on  DriverShift.RecordId=DeliveryOrder.RecordId;
+--------select * from DriverShift full join DeliveryOrder on DriverShift.RecordId=DeliveryOrder.RecordId;
+-------------------procedure---------------------
+--create procedure InstorePayRecordb1
+--as begin 
+--select OrderDateTime,OrderType,TotalAmountDue from Orders  inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo  end
+--exec InstorePayRecordb1
+--create procedure InstorePayRecordb2
+--as begin 
+--select TotalAmountDue,PaymentMethod,PaymentApprovalNo from Orders  inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo where PaymentApprovalNo between 1 and 5  end
+--exec InstorePayRecordb2
+--create procedure InstorePayRecordb4
+--as begin 
+--select TotalAmountPaid,TaxWithheld from InstorePayRecord  end
+--exec InstorePayRecordb4
+--create procedure InstorePayRecordb5
+--as begin 
+--select OrderDateTime,OrderType from Orders inner join DeliveryOrder on Orders.OrderNo=DeliveryOrder.OrderNo  end
+--exec InstorePayRecordb5
+--TABLE#10
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE MenuSellingPrice
+--ADD new_price int;
+--ALTER TABLE MenuSellingPrice
+--Alter column new_price int not null;
+--ALTER TABLE MenuSellingPrice
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(new_price);
+--ALTER TABLE MenuSellingPrice
+--ADD CHECK (CurrentSellingPrice>=10);
+--ALTER TABLE MenuSellingPrice
+--ADD CHECK (CurrentSellingPrice<=30);
+--ALTER TABLE  MenuSellingPrice
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'MenuSellingPrice', 'MenuSelling_Price';
+--EXEC sp_rename 'MenuSelling_Price', 'MenuSellingPrice';
+--sp_rename 'MenuSellingPrice.new_price', 'newprice', 'COLUMN';
+--sp_rename 'MenuSellingPrice.newprice', 'new_price', 'COLUMN';
+--ALTER TABLE MenuSellingPrice
+--drop COLUMN new_price;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice='10' AND Medium='$20';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice='30' OR Large='$30';
+--SELECT * FROM MenuSellingPrice
+--WHERE NOT CurrentSellingPrice='20';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice LIKE '3%';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice LIKE '%5';
+--SELECT * FROM MenuSellingPrice
+--WHERE Large LIKE '_3%';
+--SELECT * FROM MenuSellingPrice
+--WHERE Medium LIKE '$__%';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice LIKE '2%0';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice NOT LIKE '2%';
+--SELECT * FROM MenuSellingPrice
+--WHERE CurrentSellingPrice BETWEEN 10 AND 30;
+--TOTAL#11
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE MenuItem
+--ADD new_item int;
+--ALTER TABLE MenuItem
+--Alter column new_item int not null;
+--ALTER TABLE MenuItem
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(new_item);
+--ALTER TABLE MenuItem
+--ADD CHECK (Price>=20);
+--ALTER TABLE MenuItem
+--ADD CHECK (Price<=30);
+--ALTER TABLE  MenuItem
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'MenuItem', 'Menu_Item';
+--EXEC sp_rename 'Menu_Item', 'MenuItem';
+--sp_rename 'MenuItem.new_item', 'newitem', 'COLUMN';
+--sp_rename 'MenuItem.newitem', 'new_item', 'COLUMN';
+--ALTER TABLE MenuItem
+--drop COLUMN new_item;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM MenuItem
+--WHERE ItemCode='PZ002' AND Size='Large';
+--SELECT * FROM MenuItem
+--WHERE Size='Medium' OR Price='30';
+--SELECT * FROM MenuItem
+--WHERE NOT CurrentSellingPrice='20';
+--SELECT * FROM MenuItem
+--WHERE Name LIKE 's%';
+--SELECT * FROM MenuItem
+--WHERE Name LIKE '%a';
+--SELECT * FROM MenuItem
+--WHERE Description LIKE '_h%';
+--SELECT * FROM MenuItem
+--WHERE Name LIKE 's__%';
+--SELECT * FROM MenuItem
+--WHERE Name LIKE 'M%a';
+--SELECT * FROM MenuItem
+--WHERE CurrentSellingPrice NOT LIKE '3%';
+--SELECT * FROM MenuItem
+--WHERE Price BETWEEN 10 AND 30;
+----------join on menusellingprice and menuitem
+--------select Small,Medium,Large  from MenuSellingPrice inner join MenuItem on MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice;
+--------select * from MenuSellingPrice,MenuItem;
+--------select Name, Size,Price from MenuItem cross join MenuSellingPrice where MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice;
+--------select ItemCode, Name, Size, Price from MenuItem inner join MenuSellingPrice on MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice where size ='small';
+--------select * from MenuSellingPrice right join MenuItem on  MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice;
+--------select * from MenuSellingPrice full join MenuITem on MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice;
+--------select ItemCode as'code',Name as 'N', Size as 's', Price as 'p' from MenuItem,MenuSellingPrice where Name like 'b%';
+--------select Price as'P' from MenuItem,MenuSellingPrice where Price >100;
+--------------------------3)distinct
+----------------select distinct(name)from menuitem;
+----------------select distinct(size)from menuitem;
+----------------select distinct(price)from menuitem;
+----------------select distinct(currentsellingprice)from menuitem;
+----------------select distinct(description)from menuitem;
+----------------select count(distinct size)from menuitem;
+----------------select count(distinct name) from menuitem;
+----------------select count(distinct price)from menuitem;
+----------------select top 3 name from menuitem;
+----------------select top 2  size from menuitem;
+----------------select top 4 currentsellingprice from menuitem;
+----------------select * from menuitem order by name;
+----------------select * from menuitem order by price ;
+----------------select * from menuitem where name like 'a%'
+----------------select * from menuitem where name like '%e'
+----------------SELECT COUNT(name), price FROM menuitem GROUP BY price;
+-------------------procedure---------------
+--create procedure MenuItemproc
+--@Size VARCHAR(10)
+--as begin
+--select * from MenuItem where Size=@Size end
+--exec MenuItemproc @Size='large'
+--create proc MenuItemproc2
+--@Price float as begin
+--select * from MenuItem where Price=@Price end
+----exec MenuItemproc2  @Price=30
+--alter proc MenuItemproc3
+--@Name VARCHAR(20) as begin
+--select * from MenuItem where Name=@Name end
+--exec MenuItemproc3  @Name='Salami'
+---------multiple agregate fun-------------
+--select Price,max(Price) from MenuItem group by Price
+--select Price,min(Price) from MenuItem group by Price
+--select Size,max(Price) from MenuItem group by Size
+--select Price,max(Price) from MenuItem group by Price having min(Price)>200;
+--SELECT   Price, SUM(Price) FROM   MenuItem GROUP BY Price ORDER BY  Price DESC;
+--SELECT   Price, SUM(Price) FROM   MenuItem GROUP BY Price ORDER BY  Price;
+------------------both -procedure---------------
+--create procedure MenuItemprocb1
+--@Size VARCHAR(10)
+--as begin
+--select Name, Size,Price from MenuItem cross join MenuSellingPrice where MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice end
+--exec MenuItemprocb1 @Size='large'
+--create proc MenuItemprocb2
+--@Price float as begin
+--select * from MenuSellingPrice,MenuItem where Price=@Price end
+--exec MenuItemprocb2  @Price=30
+--create proc MenuItemprocb3
+--@Name VARCHAR(20) as begin
+--select Small,Medium,Large  from MenuSellingPrice inner join MenuItem on MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice where Name=@Name end
+--exec MenuItemproc3  @Name='Salami'
+--create proc MenuItemprocbb4
+--@Name VARCHAR(20) as begin
+--select * from MenuSellingPrice right join MenuItem on  MenusellingPrice.CurrentSellingPrice=MenuItem.CurrentSellingPrice end
+--exec MenuItemprocbb4  @Name='Salami'
+----create proc MenuItemprocb5
+----@Price float as begin
+--select ItemCode as'code',Name as 'N', Size as 's', Price as 'p' from MenuItem,MenuSellingPrice where Name like 'b%' end
+----exec MenuItemprocb5  @Price=30
+--create procedure MenuItemprocb6
+--@Size VARCHAR(10)
+--as begin
+--select Price as'P' from MenuItem,MenuSellingPrice where Price >100 end
+--exec MenuItemprocb6 @Size='large'
+--TOTAL#12
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE IngredientStock
+--ADD new_stock int;
+--ALTER TABLE IngredientStock
+--ADD old_stock int;
+--ALTER TABLE IngredientStock
+--Alter column new_stock int not null;
+--ALTER TABLE IngredientStock
+--Alter column old_stock int not null;
+--ALTER TABLE IngredientStock
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(new_stock, old_stock);
+--ALTER TABLE IngredientStock
+--ADD CHECK (StockLevel>=2000);
+--ALTER TABLE IngredientStock
+--ADD CHECK (StockLevel<=5000);
+--ALTER TABLE  IngredientStock
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'IngredientStock', 'Ingredient_Stock';
+--EXEC sp_rename 'Ingredient_Stock', 'IngredientStock';
+--sp_rename 'IngredientStock.new_stock', 'newstock', 'COLUMN';
+--sp_rename 'IngredientStock.newstock', 'new_stock', 'COLUMN';
+--sp_rename 'IngredientStock.old_stock', 'oldstock', 'COLUMN';
+--sp_rename 'IngredientStock.oldstock', 'old_stock', 'COLUMN';
+--ALTER TABLE IngredientStock
+--drop COLUMN new_stock;
+--ALTER TABLE IngredientStock
+--drop COLUMN old_stock;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM IngredientStock
+--WHERE StockLevel='5000' AND ReorderLevel='1000';
+--SELECT * FROM IngredientStock
+--WHERE StockLevel='2000' OR SuggestedStockLevel='1500';
+--SELECT * FROM IngredientStock
+--WHERE NOT SuggestedStockLevel='2500';
+--SELECT * FROM IngredientStock
+--WHERE StockLevel LIKE '3%';
+--SELECT * FROM IngredientStock
+--WHERE StockLevel LIKE '%0';
+--SELECT * FROM IngredientStock
+--WHERE SuggestedStockLevel LIKE '_5%';
+--SELECT * FROM IngredientStock
+--WHERE SuggestedStockLevel LIKE '1__%';
+--SELECT * FROM IngredientStock
+--WHERE ReorderLevel LIKE '1%0';
+--SELECT * FROM IngredientStock
+--WHERE ReorderLevel NOT LIKE '1%';
+--SELECT * FROM IngredientStock
+--WHERE StockLevel BETWEEN 2000 AND 3000;
+-------------------procedure---------------
+--create procedure IngredientStockpeoc
+--@StockLevel int
+--as begin
+--select * from IngredientStock where StockLevel=@StockLevel end
+--exec IngredientStockpeoc @StockLevel=2000
+--create proc IngredientStockproc2
+--@SuggestedStockLevel int as begin
+--select * from IngredientStock where SuggestedStockLevel=@SuggestedStockLevel end
+--exec IngredientStockproc2  @SuggestedStockLevel=2500
+--create proc IngredientStockproc3
+--@ReorderLevel int as begin
+--select * from IngredientStock where ReorderLevel=@ReorderLevel end
+--exec IngredientStockproc3  @ReorderLevel=1000
+  ------------alter constraint-----------
+--alter table IngredientStock alter column SuggestedStockLevel int;
+--alter table IngredientStock alter column ReorderLevel int;
+------------agregate function-----------
+--select max(SuggestedStockLevel) from IngredientStock
+--select max(SuggestedStockLevel) from IngredientStock where StockLevel =2000
+--select max(ReorderLevel) from IngredientStock
+--select max(ReorderLevel) from IngredientStock where StockLevel =5000
+--select min(SuggestedStockLevel) from IngredientStock
+--select min(SuggestedStockLevel) from IngredientStock where StockLevel =2000
+--select min(ReorderLevel) from IngredientStock
+--select min(ReorderLevel) from IngredientStock where StockLevel =3000
+--select sum(SuggestedStockLevel) from IngredientStock
+--select sum(SuggestedStockLevel) from IngredientStock where StockLevel =2000
+--select sum(ReorderLevel) from IngredientStock
+----select sum(ReorderLevel) from IngredientStock where StockLevel =3000
+--select avg(SuggestedStockLevel) from IngredientStock
+--select avg(SuggestedStockLevel) from IngredientStock where StockLevel =2000
+--select avg(ReorderLevel) from IngredientStock
+--select avg(ReorderLevel) from IngredientStock where StockLevel =5000
+---------------**multiple agregate function -------------
+--select SuggestedStockLevel,max(SuggestedStockLevel) from IngredientStock group by SuggestedStockLevel
+--select ReorderLevel,min(ReorderLevel) from IngredientStock group by ReorderLevel
+--select ReorderLevel,min(ReorderLevel) from IngredientStock group by ReorderLevel
+----select ReorderLevel,max(ReorderLevel) from IngredientStock group by ReorderLevel having min(SuggestedStockLevel)>200;
+--SELECT   SuggestedStockLevel, SUM(ReorderLevel) FROM   IngredientStock GROUP BY SuggestedStockLevel ORDER BY  SuggestedStockLevel DESC;
+--TABLE#13
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE Ingredients
+--ADD price int;
+--ALTER TABLE Ingredients
+--Alter column price int not null;
+--ALTER TABLE Ingredients
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(price);
+--ALTER TABLE Ingredients
+--ADD CHECK (StockLevel>=3000);
+--ALTER TABLE Ingredients
+--ADD CHECK (StockLevel<=5000);
+--ALTER TABLE  Ingredients
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'Ingredients', 'Ingredient';
+--EXEC sp_rename 'Ingredient', 'Ingredients';
+--sp_rename 'Ingredients.price', 'prices', 'COLUMN';
+--sp_rename 'Ingredients.prices', 'price', 'COLUMN';
+--ALTER TABLE Ingredients
+--drop COLUMN price;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM Ingredients
+--WHERE Code='0011' AND Name='Cheese';
+--SELECT * FROM Ingredients
+--WHERE Type='2000' OR StockLevel='3000';
+--SELECT * FROM Ingredients
+--WHERE NOT StockLevel='2000';
+--SELECT * FROM Ingredients
+--WHERE StockLevel LIKE '3%';
+--SELECT * FROM Ingredients
+--WHERE Name LIKE '%i';
+--SELECT * FROM Ingredients
+--WHERE Name LIKE '_a%';
+--SELECT * FROM Ingredients
+--WHERE Name LIKE 's__%';
+--SELECT * FROM Ingredients
+--WHERE Type LIKE 'h%t';
+--SELECT * FROM Ingredients
+--WHERE Type NOT LIKE 'h%';
+--SELECT * FROM Ingredients
+--WHERE Code BETWEEN 0011 AND 0013;
+----------join on ingredientstock and Ingredients
+--------select SuggestedStockLevel,ReorderLevel from IngredientStock  inner join Ingredients on IngredientStock.Stocklevel=Ingredients.Stocklevel;
+--------select Code,Name,Type from Ingredients inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel;
+--------select Description,Name from Ingredients inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel;
+--------select Code,Name,Type,Description from Ingredients  inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel where Ingredients.name like 's%';
+--------select * from IngredientStock,Ingredients;
+--------select Name,Type,Description from Ingredients  right join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel;
+--------select * from Ingredients  full join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel;
+--------select Name as'N', Type as 'T' from Ingredients,IngredientStock where Name like 'p';
+-------------------procedure---------------
+--create procedure Ingredientsproc
+--@Name	VARCHAR(40)
+--as begin
+--select * from Ingredients where Name=@Name end
+--exec Ingredientsproc @Name='Cheese'
+--create proc Ingredientsproc2
+--@Type varchar(40) as begin
+--select * from Ingredients where Type =@Type end
+--exec Ingredientsproc2  @Type='hot'
+--create proc Ingredientsproc3
+--@StockLevel CHAR(20) as begin
+--select * from Ingredients where StockLevel=@StockLevel end
+--exec Ingredientsproc3  @StockLevel='5000'
+--create proc Ingredientsproc4
+--@DateLastStockTake date as begin
+--select * from Ingredients where DateLastStockTake=@DateLastStockTake end
+--exec Ingredientsproc4  @DateLastStockTake='20210605'
+--create proc Ingredientsproc5
+--@Description varchar(40),
+--@DateLastStockTake date as begin
+--select * from Ingredients where DateLastStockTake=@DateLastStockTake or Description=@Description  end
+--exec Ingredientsproc5  @DateLastStockTake='20210605' , @Description='seafood topping'
+---------------both----procedure---------------
+--create procedure Ingredientsprocb1
+--@Name	VARCHAR(40)
+--as begin
+--select SuggestedStockLevel,ReorderLevel from IngredientStock  inner join Ingredients on IngredientStock.Stocklevel=Ingredients.Stocklevel where Name=@Name end
+--exec Ingredientsprocb1 @Name='Cheese'
+--create proc Ingredientsprocb2
+--@Type varchar(40) as begin
+--select Code,Name,Type from Ingredients inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel where Type =@Type end
+--exec Ingredientsprocb2  @Type='hot'
+--create proc Ingredientsprocb3
+--@StockLevel CHAR(20) as begin
+--select Code,Name,Type from Ingredients inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel where StockLevel=@StockLevel end
+--exec Ingredientsprocb3  @StockLevel='5000'
+--create proc Ingredientsprocb4
+--@DateLastStockTake date as begin
+--select Description,Name from Ingredients inner join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel where DateLastStockTake=@DateLastStockTake end
+--exec Ingredientsprocb4  @DateLastStockTake='20210605'
+--create proc Ingredientsprocb5
+--@Description varchar(40),
+--@DateLastStockTake date as begin
+--select Name,Type,Description from Ingredients  right join IngredientStock on IngredientStock.Stocklevel=Ingredients.Stocklevel where DateLastStockTake=@DateLastStockTake or Description=@Description  end
+--exec Ingredientsprocb5  @DateLastStockTake='20210605' , @Description='seafood topping'
+
+--TABLE#14
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE IngredientOrder
+--ADD order_completed int;
+--ALTER TABLE IngredientOrder
+--Alter column order_completed int not null;
+--ALTER TABLE IngredientOrder
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(order_completed);
+--ALTER TABLE IngredientOrder
+--ADD CHECK (quantity>=2000);
+--ALTER TABLE IngredientOrder
+--ADD CHECK (quantity<=7000);
+--ALTER TABLE  IngredientOrder
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'IngredientOrder', 'Ingredient_Order';
+--EXEC sp_rename 'Ingredient_Order', 'IngredientOrder';
+--sp_rename 'IngredientOrder.order_completed', 'ordercompleted', 'COLUMN';
+--sp_rename 'IngredientOrder.ordercompleted', 'order_completed', 'COLUMN';
+--ALTER TABLE IngredientOrder
+--drop COLUMN order_completed;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM IngredientOrder
+--WHERE OrderNo='IN0010' AND quantity='3000';
+--SELECT * FROM IngredientOrder
+--WHERE ReceivedDate='20210603' OR quantity='7000';
+--SELECT * FROM IngredientOrder
+--WHERE NOT Date='20210607';
+--SELECT * FROM IngredientOrder
+--WHERE quantity LIKE '3%';
+--SELECT * FROM IngredientOrder
+--WHERE quantity LIKE '%0';
+--SELECT * FROM IngredientOrder
+--WHERE OrderNo LIKE '_N%';
+--SELECT * FROM IngredientOrder
+--WHERE Date LIKE '2__%';
+--SELECT * FROM IngredientOrder
+--WHERE Date LIKE '2%7';
+--SELECT * FROM IngredientOrder
+--WHERE quantity NOT LIKE '7%';
+--SELECT * FROM IngredientOrder
+--WHERE quantity BETWEEN 2000 AND 7000;
+------------------agregate function----------------------
+--select count(*) from IngredientOrder
+--select avg(quantity) from IngredientOrder
+--select min(quantity) from IngredientOrder
+--select max(quantity) from IngredientOrder
+--select sum(quantity) from IngredientOrder
+--select avg(quantity) from IngredientOrder where  OrderNo='IN0012'
+--select min(quantity) from IngredientOrder where  OrderNo='IN0010'
+--select max(quantity) from IngredientOrder where  OrderNo='IN0009'
+--select sum(quantity) from IngredientOrder where  OrderNo='IN0012'
+--------------**multiple agregate function -------------
+--select quantity,avg(quantity) from IngredientOrder group by quantity
+--select quantity,min(quantity) from IngredientOrder group by quantity
+--select quantity,max(quantity) from IngredientOrder group by quantity
+--select quantity,max(quantity) from IngredientOrder group by quantity having min(quantity)>200;
+--SELECT   quantity, SUM(quantity) FROM   IngredientOrder GROUP BY quantity ORDER BY  quantity DESC;
+--select count(quantity) from IngredientOrder where OrderNo not in('IN0012','IN0009')
+--SELECT quantity, COUNT(quantity) FROM IngredientOrder GROUP BY quantity HAVING COUNT(quantity) > 1;
+--TABLE#15
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE QuantityOrderMenuItem
+--ADD total_order int;
+--ALTER TABLE QuantityOrderMenuItem
+--Alter column total_order int not null;
+--ALTER TABLE QuantityOrderMenuItem
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(total_order);
+--ALTER TABLE QuantityOrderMenuItem
+--ADD CHECK (quantity>=12);
+--ALTER TABLE QuantityOrderMenuItem
+--ADD CHECK (quantity<=21);
+--ALTER TABLE  QuantityOrderMenuItem
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'QuantityOrderMenuItem', 'QuantityOrder_MenuItem';
+--EXEC sp_rename 'QuantityOrder_MenuItem', 'QuantityOrderMenuItem';
+--sp_rename 'QuantityOrderMenuItem.total_order', 'totalorder', 'COLUMN';
+--sp_rename 'QuantityOrderMenuItem.totalorder', 'total_order', 'COLUMN';
+--ALTER TABLE QuantityOrderMenuItem
+--drop COLUMN total_order;
+-------------------------AND, OR and NOT, LIKE, IN and Between Operator---------------------------------
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE ItemCode='PZ002' AND quantity='21';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE OrderNo='00001' OR quantity='27';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE NOT ItemCode='PZ002';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE quantity LIKE '2%';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE quantity LIKE '%7';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE quantity LIKE '_2%';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE ItemCode LIKE 'P__%';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE ItemCode LIKE 'P%3';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE quantity NOT LIKE '2%';
+--SELECT * FROM QuantityOrderMenuItem
+--WHERE quantity BETWEEN 12 AND 27;
+----------join on ingredientorder and QuantityOrderMenuItem
+--------select Date, ReceivedDate,Status from IngredientOrder inner join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo;
+--------select Description, TotalAmount from IngredientOrder inner join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo;
+--------select * from QuantityOrderMenuItem,IngredientOrder;
+--------Select * from IngredientOrder full join QuantityOrderMenuItem   on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo;
+--------select Date,ReceivedDate,Status from IngredientOrder right join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo;
+--------select status as 'S', TotalAmount as 'TA' from IngredientOrder,QuantityOrderMenuItem where TotalAmount>300;
+------------------agregate function----------------------
+--select count(*) from QuantityOrderMenuItem
+--select avg(quantity) from QuantityOrderMenuItem
+--select min(quantity) from QuantityOrderMenuItem
+--select max(quantity) from QuantityOrderMenuItem
+--select sum(quantity) from QuantityOrderMenuItem
+--select avg(quantity) from QuantityOrderMenuItem where  OrderNo='PZ001'
+--select min(quantity) from QuantityOrderMenuItem where  OrderNo='PZ001'
+--select max(quantity) from QuantityOrderMenuItem where  OrderNo='PZ002'
+--select sum(quantity) from QuantityOrderMenuItem where  OrderNo='PZ003'
+--------------**multiple agregate function -------------
+--select quantity,avg(quantity) from QuantityOrderMenuItem group by quantity
+--select quantity,min(quantity) from QuantityOrderMenuItem group by quantity
+--select quantity,max(quantity) from QuantityOrderMenuItem group by quantity
+--select quantity,max(quantity) from QuantityOrderMenuItem group by quantity having min(quantity)>2;
+--SELECT   quantity, SUM(quantity) FROM   QuantityOrderMenuItem GROUP BY quantity ORDER BY  quantity DESC;
+--select count(quantity) from QuantityOrderMenuItem where OrderNo not in('IN0012','IN0009')
+--SELECT quantity, COUNT(quantity) FROM QuantityOrderMenuItem GROUP BY quantity HAVING COUNT(quantity) > 1;
+--TABLE#16
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE MenuItemMadeofIngredients
+--ADD totalitem_made int;
+--ALTER TABLE MenuItemMadeofIngredients
+--Alter column totalitem_made int not null;
+--ALTER TABLE MenuItemMadeofIngredients
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(totalitem_made);
+--ALTER TABLE MenuItemMadeofIngredients
+--ADD CHECK (code>=0011);
+--ALTER TABLE MenuItemMadeofIngredients
+--ADD CHECK (code<=0013);
+--ALTER TABLE  MenuItemMadeofIngredients
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'MenuItemMadeofIngredients', 'MenuItemMadeof_Ingredients';
+--EXEC sp_rename 'MenuItemMadeof_Ingredients', 'MenuItemMadeofIngredients';
+--sp_rename 'MenuItemMadeofIngredients.totalitem_made', 'totalitemmade', 'COLUMN';
+--sp_rename 'MenuItemMadeofIngredients.totalitemmade', 'totalitem_made', 'COLUMN';
+--ALTER TABLE MenuItemMadeofIngredients
+--drop COLUMN totalitem_made;
+------------------agregate function----------------------
+--select count(*) from MenuItemMadeofIngredients
+--select avg(quantity) from MenuItemMadeofIngredients
+--select min(quantity) from MenuItemMadeofIngredients
+--select max(quantity) from MenuItemMadeofIngredients
+--select sum(quantity) from MenuItemMadeofIngredients
+--TABLE#16
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--ADD total_order int;
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--Alter column total_order int not null;
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(total_order);
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--ADD CHECK (code>=0011);
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--ADD CHECK (code<=0013);
+--ALTER TABLE  IngredientsQuantityIngredientOrder
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'IngredientsQuantityIngredientOrder', 'IngredientsQuantity_IngredientOrder';
+--EXEC sp_rename 'IngredientsQuantity_IngredientOrder', 'IngredientsQuantityIngredientOrder';
+--sp_rename 'IngredientsQuantityIngredientOrder.total_order', 'totalorder', 'COLUMN';
+--sp_rename 'IngredientsQuantityIngredientOrder.totalorder', 'total_order', 'COLUMN';
+--ALTER TABLE IngredientsQuantityIngredientOrder
+--drop COLUMN total_order;
+------------------procedure---------------------
+--create procedure IngredientsQuantityIngredientOrder1
+--as begin 
+--select Code,OrderNo from IngredientsQuantityIngredientOrder  end
+--exec IngredientsQuantityIngredientOrder1
+--create procedure IngredientsQuantityIngredientOrder2
+--as begin 
+--select Code,quantity from IngredientsQuantityIngredientOrder  end
+--exec IngredientsQuantityIngredientOrder2
+--create procedure IngredientsQuantityIngredientOrder3
+--as begin 
+--select Code,quantity,OrderNo from IngredientsQuantityIngredientOrder  end
+--exec IngredientsQuantityIngredientOrder3
+--create procedure IngredientsQuantityIngredientOrder4
+--as begin 
+--select * from IngredientsQuantityIngredientOrder  end
+--exec IngredientsQuantityIngredientOrder4
+--create procedure IngredientsQuantityIngredientOrder5
+--as begin 
+--select quantity,OrderNo from IngredientsQuantityIngredientOrder  end
+--exec IngredientsQuantityIngredientOrder5
+
+
+--alter procedure outputproc
+--@quantity int,
+--@Code int output
+--as begin 
+--select @Code=count(distinct Code) from IngredientsQuantityIngredientOrder where  quantity=@quantity end
+--declare @quantitytotal int
+----exec outputproc '200', @quantitytotal output
+--print @quantitytotal
+
+------------------agregate function----------------------
+--select count(*) from IngredientsQuantityIngredientOrder
+--select avg(quantity) from IngredientsQuantityIngredientOrder
+--select min(quantity) from IngredientsQuantityIngredientOrder
+--select max(quantity) from IngredientsQuantityIngredientOrder
+--select sum(quantity) from IngredientsQuantityIngredientOrder
+--TABLE#17
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE InstorePayRecord
+--ADD amounttobepaid int;
+--ALTER TABLE InstorePayRecord
+--Alter column amounttobepaid int not null;
+--ALTER TABLE InstorePayRecord
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(amounttobepaid);
+--ALTER TABLE InstorePayRecord
+--ADD CHECK (TotalAmountPaid>=200);
+--ALTER TABLE InstorePayRecord
+--ADD CHECK (TotalAmountPaid<=400);
+--ALTER TABLE  InstorePayRecord
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'InstorePayRecord', 'InstorePayRecord';
+--EXEC sp_rename 'InstorePayRecord', 'InstorePayRecord';
+--sp_rename 'InstorePayRecord.amounttobepaid', 'amount_tobe_paid', 'COLUMN';
+--sp_rename 'InstorePayRecord.amount_tobe_paid', 'amounttobepaid', 'COLUMN';
+--ALTER TABLE InstorePayRecord
+--drop COLUMN amounttobepaid;
+-------------------procedure---------------------
+--create procedure InstorePayRecord1
+--as begin 
+--select TotalAmountPaid from InstorePayRecord  end
+--exec InstorePayRecord1
+--create procedure InstorePayRecord2
+--as begin 
+--select GrossPayment from InstorePayRecord  end
+----exec InstorePayRecord2
+--create procedure InstorePayRecord3
+--as begin 
+--select TaxWithheld from InstorePayRecord  end
+--exec InstorePayRecord3
+----create procedure InstorePayRecord4
+----as begin 
+----select TotalAmountPaid,TaxWithheld from InstorePayRecord  end
+--exec InstorePayRecord4
+--create procedure InstorePayRecord5
+--as begin 
+--select TotalAmountPaid,TaxWithheld,GrossPayment from InstorePayRecord  end
+--exec InstorePayRecord5
+--TABLE#18
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE InstorePay
+--ADD amounttobepaid int;
+--ALTER TABLE InstorePay
+--Alter column amounttobepaid int not null;
+--ALTER TABLE InstorePay
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(amounttobepaid);
+--ALTER TABLE InstorePay
+--ADD CHECK (TotalAmountPaid>=200);
+--ALTER TABLE InstorePay
+--ADD CHECK (TotalAmountPaid<=400);
+--ALTER TABLE  InstorePay
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'InstorePay', 'Instore_Pay';
+--EXEC sp_rename 'Instore_Pay', 'InstorePay';
+--sp_rename 'InstorePay.amounttobepaid', 'amount_tobe_paid', 'COLUMN';
+--sp_rename 'InstorePay.amount_tobe_paid', 'amounttobepaid', 'COLUMN';
+--ALTER TABLE InstorePay
+--drop COLUMN amounttobepaid;
+-----------------single row opperation--------
+--select lower(RecordId) , LOWER(PeriodEndDate) from InstorePay
+
+
+--select CONCAT(RecordId,Date) from InstorePay
+---------------------------------------------------
+--------procedure paramatrized-------------
+--create proc InstorePayproc1
+--@TotalAmountPaid VARCHAR(20) as begin
+--select * from InstorePay where TotalAmountPaid=@TotalAmountPaid end
+--exec InstorePayproc1  @TotalAmountPaid='200'
+----create proc InstorePayproc2
+----@RecordId VARCHAR(10) as begin
+----select * from InstorePay where RecordId=@RecordId end
+----exec InstorePayproc2  @RecordId='PAY0009'
+--create proc InstorePayproc3
+--@Date Date as begin
+--select * from InstorePay where Date=@Date end
+--exec InstorePayproc3  @Date='20210515'
+--create proc InstorePayproc4
+--@PeriodStartDate DATE as begin
+--select * from InstorePay where PeriodStartDate=@PeriodStartDate end
+--exec InstorePayproc4  @PeriodStartDate='20210522'
+--create proc InstorePayproc5
+--@PeriodEndDate DATE, @PeriodStartDate DATE as begin
+--select * from InstorePay where PeriodEndDate=@PeriodEndDate or PeriodStartDate=@PeriodStartDate end
+--exec InstorePayproc5  @PeriodEndDate='20210512',@PeriodStartDate='20210522'
+--TABLE#19
+------------------------------------ALTER QUERIES----------------------------------
+--ALTER TABLE InstoreShift
+--ADD total_shift int;
+--ALTER TABLE InstoreShift
+--Alter column total_shift int not null;
+--ALTER TABLE InstoreShift
+--ADD CONSTRAINT MyUniqueConstraint UNIQUE(total_shift);
+--ALTER TABLE  InstoreShift
+--DROP CONSTRAINT MyUniqueConstraint;
+--EXEC sp_rename 'InstoreShift', 'Instore_Shift';
+--EXEC sp_rename 'Instore_Shift', 'InstoreShift';
+--sp_rename 'InstoreShift.total_shift', 'totalshift', 'COLUMN';
+--sp_rename 'InstoreShift.totalshift', 'total_shift', 'COLUMN';
+--ALTER TABLE InstoreShift
+--drop COLUMN total_shift;
+------procedure paramatrized-------------
+----create proc InstoreShiftprocc1
+----@RecordId DATE as begin
+----select * from InstoreShift where RecordId=@RecordId end
+--exec InstoreShiftprocc1  @RecordId='SFT10'
+--create proc InstoreShiftprocc2
+--@StartDate CHAR(10) as begin
+--select * from InstoreShift where StartDate=@StartDate end
+--exec InstoreShiftprocc2  @StartDate='20210606'
+--create proc InstoreShiftprocc3
+--@EndTime TIME as begin
+--select * from InstoreShift where EndTime=@EndTime end
+--exec InstoreShiftprocc3  @EndTime='11:30:00 PM'
+--create proc InstoreShiftprocc4
+--@StartTime TIME as begin
+--select * from InstoreShift where StartTime=@StartTime end
+--exec InstoreShiftprocc4  @StartTime='04:00:00 PM'
+--create proc InstoreShiftprocc5
+--@EndDate CHAR(10) as begin
+--select * from InstoreShift where EndDate=@EndDate end
+--exec InstoreShiftprocc5  @EndDate='20210512'
+--create proc InstoreShiftprocc6
+--@StaffId VARCHAR(10) as begin
+--select * from InstoreShift where StaffId=@StaffId end
+--exec InstoreShiftprocc6  @StaffId='S0001'
+
+
+---------------trigger---------------insert delete---------------------
+--CREATE TABLE WalkInOrder_insert_trig (
+--OrdNo int identity(1,1),
+-- descriptions varchar(122),
+--);
+
+--create trigger WalkInOrder_insert on WalkInOrder
+--after insert as begin
+--declare @OrdNo CHAR(10)
+--select @OrdNo=OrderNo from inserted
+--insert into WalkInOrder_insert_trig values(' new employe with id' + CAST(@OrdNo as nvarchar(55)) +'is inserted at' + cast(getdate() as nvarchar(66))) end
+
+--INSERT INTO WalkInOrder VALUES ('00002', '20210618 10:41:09 PM');
+--select * from WalkInOrder
+--select * from WalkInOrder_insert_trig
+
+---CREATE TABLE PhoneOrder_insert_trig (
+--OrdNo int identity(1,1),
+-- descriptions varchar(122),
+--);
+
+--create trigger PhoneOrder_insert_triger on PhoneOrder
+--after insert as begin 
+--declare @OrdNo CHAR(10)
+--select @OrdNo=OrderNo from inserted
+--insert into PhoneOrder_insert_trig values(' new employe with id' + CAST(@OrdNo as nvarchar(55)) +'is inserted at' + cast(getdate() as nvarchar(66))) end
+
+--delete from PhoneOrder where OrderNo='00003'
+--INSERT INTO PhoneOrder VALUES ('00003', '20210619 10:34:33 PM', null);
+--select * from PhoneOrder
+--select * from PhoneOrder_insert_trig
+
+--CREATE TABLE PickupOrder_insert_trig (
+--OrdNo int identity(1,1),
+-- descriptions varchar(122),
+--);
+
+--create trigger PickupOrder_insert_triger on PickupOrder
+--after insert as begin 
+--declare @OrdNo CHAR(10)
+--select @OrdNo=OrderNo from inserted
+--insert into PickupOrder_insert_trig values(' new employe with id' + CAST(@OrdNo as nvarchar(55)) +'is inserted at' + cast(getdate() as nvarchar(66))) end
+
+
+--INSERT INTO PickupOrder VALUES ('00003', '20210619 10:34:33 PM');
+--select * from PickupOrder
+--select * from PhoneOrder_insert_trig
+
+---------------------------------------------delete---trigger------------------------
+--CREATE TABLE PickupOrder_del_trig (
+--OrdNo int identity(1,1),
+-- descriptions varchar(122),
+--);
+
+--create trigger PickupOrder_insert_triger on PickupOrder
+--after insert as begin 
+--declare @OrdNo CHAR(10)
+--select @OrdNo=OrderNo from inserted
+--insert into PickupOrder_insert_trig values(' new employe with id' + CAST(@OrdNo as nvarchar(55)) +'is inserted at' + cast(getdate() as nvarchar(66))) end
+
+
+--INSERT INTO PickupOrder VALUES ('00003', '20210619 10:34:33 PM');
+--select * from PickupOrder
+--select * from PhoneOrder_insert_trig
+
+--CREATE TABLE DriverPayRecord_insert_trig (
+--OrdNo int identity(1,1),
+-- descriptions varchar(122),
+--);
+
+--create trigger DriverPayRecord_insert_triger on DriverPayRecord
+--after insert as begin 
+--declare @OrdNo CHAR(10)
+--select @OrdNo=TotalAmountPaid from inserted
+--insert into DriverPayRecord_insert_trig values(' new employe with id' + CAST(@OrdNo as nvarchar(55)) +'is inserted at' + cast(getdate() as nvarchar(66))) end
+
+--delete from DriverPayRecord where TotalAmountPaid='300'
+--INSERT INTO DriverPayRecord VALUES ( '300', '360', '60');
+--select * from DriverPayRecord
+--select * from DriverPayRecord_insert_trig
+
+---------------------------------------------delete---trigger------------------------
+
+----CREATE TABLE DriverPayRecord_dele(
+----TotalAmountPaid		VARCHAR(20),
+----GrossPayment		CHAR(20),
+----TaxWithheld			CHAR(20)
+----);
+
+--alter trigger DriverPayRecord_dele_triger on DriverPayRecord
+--after delete as begin 
+--insert into DriverPayRecord_dele select * from deleted
+-- end
+
+--delete from DriverPayRecord where TotalAmountPaid='300'
+--INSERT INTO DriverPayRecord VALUES ( '300', '360', '60');
+--select * from DriverPayRecord
+--select * from DriverPayRecord_insert_trig
+
+--create table DriverPay_trig_insert(
+--orderno int identity(1,1),
+--descriptionss varchar(100),);
+------drop table DriverPay_trig_insert
+
+----alter trigger DriverPay_insrt_tri on DriverPay after insert as begin
+----declare @orderno varchar(55)
+----select @orderno=RecordId from inserted
+----insert into DriverPay_trig_insert values('1 driverpay of the id' + cast(@orderno as nvarchar(55))+ 'is added at the date of' + cast(getdate() as nvarchar(55))) end
+
+--delete from DriverPay where RecordId='P0011'
+--INSERT INTO DriverPay VALUES ('P0011', '300', '20210615', '20210606', '20210612');
+--select  * from DriverPay
+--select  * from DriverPay_trig_insert
+
+-----------------delete---triger--------------------------------------------
+--CREATE TABLE DriverPay_dele(
+--RecordId		VARCHAR(10) PRIMARY KEY, 
+--TotalAmountPaid	VARCHAR(20), 
+--Date			DATE, 
+--PeriodStartDate	DATE, 
+--PeriodEndDate	DATE,
+--FOREIGN KEY (TotalAmountPaid) REFERENCES DriverPayRecord(TotalAmountPaid) ON UPDATE CASCADE ON DELETE CASCADE
+--);
+
+--alter trigger DriverPay_dele_tri on DriverPay after delete as begin
+--insert into DriverPay_dele select * from deleted end
+
+--delete from DriverPay where RecordId='P0011'
+--INSERT INTO DriverPay VALUES ('P0011', '123', '20210615', '20210606', '20210612');
+--select  * from DriverPay
+--select  * from DriverPay_trig_del
+
+---create table DriverShift_insert_trig(
+--id int identity(1,1),
+--descriptionss varchar(122),);
+
+--create trigger DriverShift_trig_insert on DriverShift after insert as begin 
+--declare @id varchar(39)
+----select @id=RecordId from inserted 
+--insert into DriverShift_insert_trig values ('new driver shift record added of id' + cast(@id as nvarchar(55)) + 'at the date of' + cast(getdate() as nvarchar(55))) end
+
+--delete from DriverShift where RecordId='000224'
+--INSERT INTO DriverShift VALUES ('000224', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', 'P0011');
+--select * from DriverShift
+--select * from DriverShift
+--select * from DriverShift_insert_trig
+
+--------------delete-trig-----------------------------
+
+--CREATE TABLE DriverShift_delete(
+--RecordId		VARCHAR(10) primary key, 
+--StartDate		DATE,
+--StartTime		TIME,
+--EndDate			DATE, 
+--EndTime			TIME, 
+--StaffId			VARCHAR(10),
+--DriverPayRecordId	VARCHAR(10),
+--FOREIGN KEY (StaffId) REFERENCES DriverStaff (StaffId)ON UPDATE CASCADE ON DELETE CASCADE,
+--FOREIGN KEY (DriverPayRecordId) REFERENCES DriverPay(RecordId)ON UPDATE CASCADE ON DELETE CASCADE
+--);
+--drop table DriverShift_delete
+
+--create trigger DriverShift_delete_tr on DriverShift after delete as begin
+--insert into DriverShift_delete select * from deleted end
+
+--delete from DriverShift where RecordId='000224'
+--INSERT INTO DriverShift VALUES ('000224', '20210608', '04:30:09 PM', '20210608', '11:30:09 PM', 'SA005', 'P0011');
+--select * from DriverShift
+--select * from DriverShift
+--select * from DriverShift_del_trig
+------------------------------------------------trigger------------------------
+
+------------------veiw-------------------------------
+--create view IngredientOrder_view as select * from IngredientOrder;
+----select * from IngredientOrder_view
+
+--create view QuantityOrderMenuItem_vew as 
+--select Date, ReceivedDate,Status from IngredientOrder inner join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo
+--select * from QuantityOrderMenuItem_vew
+
+--create view QuantityOrderMenuItem_vew2 as 
+--select Date,ReceivedDate,Status from IngredientOrder right join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo
+--select * from QuantityOrderMenuItem_vew2
+
+--create view QuantityOrderMenuItem_vew3 as 
+--select status as 'S', TotalAmount as 'TA' from IngredientOrder,QuantityOrderMenuItem where TotalAmount>300;
+--select * from QuantityOrderMenuItem_vew3
+
+--create view QuantityOrderMenuItem_vew4 as 
+--select Date, ReceivedDate,Status from IngredientOrder inner join QuantityOrderMenuItem on IngredientOrder.OrderNo=QuantityOrderMenuItem.OrderNo;
+--select * from QuantityOrderMenuItem_vew4
+----------------veiw-------------------------------------------------
+---------------------------single row operation ----------------
+--select upper(fName) from InstoreStaff
+--select lower(fName) from InstoreStaff
+--select concat(fName,lName) from InstoreStaff
+--select concat(fName,lName) from InstoreStaff
+--select upper(left(fName,1)) + SUBSTRING(fName,2,len(fName)) from InstoreStaff
+------select LEN(fName) from InstoreStaff
+--select  SUBSTRING(fName,1,len(fName)) from InstoreStaff
+--select right(replicate('*',2) + fName,7) from InstoreStaff
+--select right(replicate('_',6) + left(fName,7),7) from InstoreStaff
+--select round(accNo,-2) from InstoreStaff
+--select trim(fName) from InstoreStaff
+----------------row-------------------------------------
